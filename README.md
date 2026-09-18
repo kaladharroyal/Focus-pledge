@@ -1,107 +1,201 @@
-# FocusPledge — Self-Scheduling Focus & Time Management App
+# FocusPledge — Self-Scheduling Focus & Gamification App
 
-FocusPledge is a full-stack MERN (MongoDB, Express, React, Node.js) application designed to help students avoid phone distraction after getting home by committing to a self-made daily schedule, enforcing it with interactive focus guards, rewarding consistency with an exact gamification engine, and issuing a downloadable, verified **"Time Management Consistency Certificate" (PDF)**.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6-purple.svg)](https://vitejs.dev/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen.svg)](https://www.mongodb.com/)
+[![Render](https://img.shields.io/badge/Backend-Render-46E3B7.svg)](https://render.com/)
+[![Vercel](https://img.shields.io/badge/Frontend-Vercel-black.svg)](https://vercel.com/)
 
----
-
-## 🌟 Core Flow & Features
-
-1. **Evening Check-In ("I'm Home")**:
-   - Tap "I'm Home" upon arrival to initiate today's focus pledge and advance your daily consistency streak.
-   - Shows active streak flame, streak multiplier, and productivity tier.
-
-2. **Schedule Builder**:
-   - Add/edit/delete time slots (e.g. Study 5–7 PM, Break 7–7:30 PM, Drawing 7:30–8:30 PM, Sleep prep 10 PM).
-   - Built-in smart duration calculator and preset routines (*Balanced Student Evening*, *Exam Sprint*, *Creative Hustle*).
-
-3. **Active Focus Session & Distraction Guard**:
-   - Circular countdown progress ring with live timer.
-   - Ambient sound generator (brown/white noise synthesizer via Web Audio API).
-   - Rotating focus quotes and audio feedback.
-   - **Distraction Guard**: Intercepts attempts to open distracting apps (Instagram, TikTok, YouTube, Mobile Games, etc.) with a high-friction overlay warning.
-   - If user breaks focus: **-5 credits penalty**.
-   - If user completes slot: **+10 base credits × Streak Multiplier**.
-
-4. **Gamification Engine (Exact Formula Rules)**:
-   - **Base Credit**: `+10 credits` per completed slot.
-   - **Full-Day Completion Bonus**: `+20 credits` when all scheduled slots for the day are completed.
-   - **Streak Multiplier**:
-     - Day 1–2: `1.0x`
-     - Day 3–6: `1.2x`
-     - Day 7–29: `1.5x`
-     - Day 30+: `2.0x`
-   - **Distraction Penalty**: `-5 credits`.
-   - **Productivity Tiers**:
-     - 🥉 **Bronze**: 0 – 500 credits
-     - 🥈 **Silver**: 501 – 2,000 credits
-     - 🥇 **Gold**: 2,001+ credits
-   - **Badges Catalog**: First Pledge, Ignition (3d), Focus Warrior (7d), Habit Master (21d), Zen Master (30d), Silver Achiever, Gold Legend, Flawless Day, Shield of Willpower.
-
-5. **Dashboard & Analytics**:
-   - 7-Day interactive productivity & credit flow graph.
-   - Real-time credit audit ledger with transaction history.
-   - Badges trophy showcase.
-
-6. **Time Management Consistency Certificate (PDF)**:
-   - **Unlock Condition**: Silver level (500+ credits) **OR** 21-day streak.
-   - Authentic gold-foil credential with recipient name, verified streak, total credits, consistency rating (98.6%), and unique serial number (`FP-2026-XXXXXX`).
-   - One-click high-definition PDF export and shareable credential link.
-
-7. **Settings & Simulation Controls**:
-   - Customizable distraction blacklist.
-   - Sound and notification preferences.
-   - Quick developer/demo simulator to test milestone transitions.
+> **FocusPledge** is a full-stack MERN (MongoDB, Express, React, Node.js) web application engineered to help students and professionals conquer post-commute phone distraction. Commit to your evening schedule, enter guarded focus sessions, earn gamified credits with streak multipliers, and unlock an official downloadable **Time Management Consistency Certificate (PDF)**.
 
 ---
 
-## 🚀 Quick Start Guide
+## 📸 Screenshots & Preview
+
+![FocusPledge App Preview](https://raw.githubusercontent.com/kaladharroyal/Focus-pledge/main/docs/preview.png)
+
+| 🏠 "I'm Home" Check-In | ⏱️ Guarded Focus Session | 🎓 Verifiable Certificate |
+| :---: | :---: | :---: |
+| Daily streak locks & pledge activation | Live circular timer + Distraction Guard | Downloadable high-res PDF credential |
+
+---
+
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Gamification Formula](#-gamification-formula)
+- [API Reference](#-api-reference)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🌟 Features
+
+- **🏠 "I'm Home" Evening Commitment**: Tap check-in upon arriving home to lock in daily streaks and initiate slot tracking.
+- **📅 Timeline Schedule Builder**: Drag-and-drop or configure study, project, and break blocks with automated duration calculators.
+- **🛡️ Distraction Guard & Blocker**: Intercepts attempts to open blacklisted apps (Instagram, TikTok, YouTube, Games) with a high-friction friction screen.
+- **🔥 Multiplier-Based Gamification**: Base +10 credits per slot, +20 full-day completion bonus, and progressive streak multipliers (up to 2.0x).
+- **📊 7-Day Consistency Analytics**: Interactive charts, badge trophies, and real-time transaction audit ledger.
+- **🎓 PDF Certificate Generator**: High-resolution, verifiable academic certificate unlocked at Silver Tier (500 pts) or 21-day streak.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18, Vite, Lucide Icons, Canvas Confetti, jsPDF, html2canvas, Web Audio API Sound Synthesizer, Vanilla CSS Design System.
+- **Backend**: Node.js, Express.js, Mongoose ORM, In-Memory MongoDB auto-fallback.
+- **Hosting**: Vercel (Frontend), Render (Backend API), MongoDB Atlas (Cloud Database).
+
+---
+
+## 📥 Installation
+
+Follow these steps to set up and run FocusPledge locally on your machine.
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- npm
+- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [npm](https://www.npmjs.com/) (version 9 or higher)
+- [Git](https://git-scm.com/)
 
-### 1. Start Backend Server
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/kaladharroyal/Focus-pledge.git
+cd Focus-pledge
+```
+
+### Step 2: Install Backend Dependencies
 ```bash
 cd server
 npm install
-npm start
 ```
-*Note: The backend automatically connects to local MongoDB or seamlessly spawns an embedded In-Memory MongoDB database if no local MongoDB instance is running.*
 
-### 2. Start Frontend App
+### Step 3: Configure Environment Variables
+Create a `.env` file in the `server/` directory:
 ```bash
-cd client
-npm install
-npm run dev
+cp .env.example .env
 ```
-Open **http://localhost:5173** in your browser.
+Add your connection parameters:
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/focuspledge
+CLIENT_URL=http://localhost:5173
+```
+
+### Step 4: Install Frontend Dependencies
+```bash
+cd ../client
+npm install
+```
 
 ---
 
-## ☁️ Render Deployment Blueprint
+## 🚀 Usage
 
-This repository includes a native [render.yaml](file:///d:/kaladharroyal/projects/planner/render.yaml) Infrastructure-as-Code blueprint for deploying both the Backend API and Frontend Static App with zero friction.
+### Running Locally
 
-### Option 1: One-Click Render Blueprint (Recommended)
-1. Push your repository to GitHub:
+1. **Start the Backend API Server**:
    ```bash
-   git push -u origin main
+   cd server
+   npm start
    ```
-2. Log in to [Render.com](https://render.com).
-3. Click **New +** > **Blueprint**.
-4. Select your GitHub repository (`Focus-pledge`).
-5. Render will automatically detect `render.yaml` and configure:
-   - **Backend Web Service** (`focuspledge-api`): Root `server/`, build `npm install`, start `node server.js`.
-   - **Frontend Static Site** (`focuspledge-client`): Root `client/`, build `npm install && npm run build`, publish directory `./dist`.
-6. Add your `MONGODB_URI` environment variable under the backend service settings in Render.
+   The API will start on `http://localhost:5000`.
 
-### Option 2: Manual Web Service Setup on Render (Backend Only)
-- **Environment**: Node
-- **Root Directory**: `server`
-- **Build Command**: `npm install`
-- **Start Command**: `node server.js`
-- **Health Check Path**: `/api/health`
-- **Environment Variables**:
-  - `NODE_ENV`: `production`
-  - `PORT`: `10000`
-  - `MONGODB_URI`: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/focuspledge?retryWrites=true&w=majority`
+2. **Start the Frontend Development Server**:
+   ```bash
+   cd client
+   npm run dev
+   ```
+   Open your browser at `http://localhost:5173`.
+
+### Example Flow:
+1. Tap **"I'm Home — Start Pledge"** on the home screen.
+2. Navigate to **Schedule** and click **"+ Add Time Slot"** or choose a preset like *Balanced Student*.
+3. Click **"Start Focus"** on an active slot to launch the guarded countdown timer.
+4. If you attempt to open a distracting app, the **Distraction Guard** overlay triggers with a -5 credit warning.
+5. Complete the session to claim your credits and level up to **Silver** to export your certificate!
+
+---
+
+## 🎮 Gamification Formula
+
+| Action | Reward / Rule |
+| :--- | :--- |
+| **Completed Focus Slot** | `+10 Credits` × Streak Multiplier |
+| **Full-Day Completion Bonus** | `+20 Credits` (awarded when all daily slots are done) |
+| **Day 1–2 Streak** | `1.0x` Multiplier |
+| **Day 3–6 Streak** | `1.2x` Multiplier |
+| **Day 7–29 Streak** | `1.5x` Multiplier |
+| **Day 30+ Streak** | `2.0x` Double Multiplier |
+| **Distraction Penalty** | `-5 Credits` |
+| **Bronze Tier** | 0 – 500 Credits |
+| **Silver Tier** | 501 – 2,000 Credits |
+| **Gold Tier** | 2,001+ Credits |
+| **Certificate Unlock** | Silver Tier (500+ pts) **OR** 21-Day Streak |
+
+---
+
+## 🔌 API Reference
+
+### User & Check-In
+- `GET /api/user` — Fetch current user profile, credits, and streak.
+- `POST /api/user/checkin` — Check in for the day and increment streak.
+- `PUT /api/user/profile` — Update user settings and blocked app blacklist.
+
+### Schedules
+- `GET /api/schedules/today` — Retrieve today's scheduled time slots.
+- `POST /api/schedules/slots` — Add a new focus slot.
+- `PUT /api/schedules/slots/:id` — Update slot details or status.
+- `DELETE /api/schedules/slots/:id` — Remove a slot.
+
+### Focus & Penalties
+- `POST /api/focus/start` — Activate focus mode on a slot.
+- `POST /api/focus/complete` — Complete slot, calculate credits with multipliers.
+- `POST /api/focus/penalty` — Log a distraction attempt and deduct 5 credits.
+
+### Certificate
+- `GET /api/certificate/status` — Check certificate eligibility criteria.
+- `POST /api/certificate/issue` — Generate official verifiable certificate record.
+- `GET /api/certificate/verify/:id` — Public credential verification.
+
+---
+
+## ☁️ Deployment
+
+### Live Production Endpoints
+- **Frontend App (Vercel)**: [https://client-eosin-eta.vercel.app/](https://client-eosin-eta.vercel.app/)
+- **Backend API (Render)**: [https://focuspledge-api.onrender.com](https://focuspledge-api.onrender.com)
+
+### Render Blueprint Deployment
+Deploy both services with one click using the included [`render.yaml`](render.yaml) file:
+1. Link your repository in the [Render Dashboard](https://dashboard.render.com).
+2. Create a new **Blueprint** project.
+3. Supply your `MONGODB_URI` environment variable.
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information.
+
+---
+
+*FocusPledge © 2026. Built with precision for student focus and time management excellence.*
