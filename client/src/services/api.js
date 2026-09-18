@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.VITE_API_URL 
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api` 
-  : '/api';
+  : (import.meta.env.PROD ? 'https://focuspledge-api.onrender.com/api' : '/api');
 
 export const api = {
   // User & Checkin
