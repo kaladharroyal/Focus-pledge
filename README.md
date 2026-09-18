@@ -78,7 +78,30 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
-## 🛠️ Tech Stack
-- **Frontend**: React 18, Vite, Lucide Icons, Canvas Confetti, jsPDF, html2canvas, Web Audio API Sound Synthesizer, Glassmorphism CSS Design System.
-- **Backend**: Node.js, Express.js, Mongoose, MongoDB Memory Server fallback.
-- **Architecture**: RESTful API, Service-Layer Gamification Engine.
+## ☁️ Render Deployment Blueprint
+
+This repository includes a native [render.yaml](file:///d:/kaladharroyal/projects/planner/render.yaml) Infrastructure-as-Code blueprint for deploying both the Backend API and Frontend Static App with zero friction.
+
+### Option 1: One-Click Render Blueprint (Recommended)
+1. Push your repository to GitHub:
+   ```bash
+   git push -u origin main
+   ```
+2. Log in to [Render.com](https://render.com).
+3. Click **New +** > **Blueprint**.
+4. Select your GitHub repository (`Focus-pledge`).
+5. Render will automatically detect `render.yaml` and configure:
+   - **Backend Web Service** (`focuspledge-api`): Root `server/`, build `npm install`, start `node server.js`.
+   - **Frontend Static Site** (`focuspledge-client`): Root `client/`, build `npm install && npm run build`, publish directory `./dist`.
+6. Add your `MONGODB_URI` environment variable under the backend service settings in Render.
+
+### Option 2: Manual Web Service Setup on Render (Backend Only)
+- **Environment**: Node
+- **Root Directory**: `server`
+- **Build Command**: `npm install`
+- **Start Command**: `node server.js`
+- **Health Check Path**: `/api/health`
+- **Environment Variables**:
+  - `NODE_ENV`: `production`
+  - `PORT`: `10000`
+  - `MONGODB_URI`: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/focuspledge?retryWrites=true&w=majority`
