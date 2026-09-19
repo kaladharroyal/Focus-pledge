@@ -1,34 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 const { calculateTier, checkAndAwardBadges } = require('../services/gamificationService');
 
-// Helper to get or create demo user
-async function getOrCreateDefaultUser() {
-  let user = await User.findOne();
-  if (!user) {
-    user = await User.create({
-      name: 'Alex Rivera',
-      email: 'alex.rivera@focuspledge.io',
-      totalCredits: 320,
-      currentStreak: 5,
-      highestStreak: 5,
-      level: 'Bronze',
-      completedSlotsCount: 18,
-      distractionsBlockedCount: 3,
-      unlockedBadges: [
-        { id: 'first_pledge', name: 'First Pledge', description: 'Completed your first focus session without distraction.', icon: '🌱', unlockedAt: new Date() },
-        { id: 'streak_3', name: 'Ignition (1.2x)', description: 'Maintained a 3-day streak! Multiplier upgraded to 1.2x.', icon: '⚡', unlockedAt: new Date() }
-      ]
-    });
-  }
-  return user;
-}
+// Protect all user routes with auth middleware
+router.use(auth);
 
-// GET /api/user
+// GET /api/user - Get logged-in user details
 router.get('/', async (req, res) => {
   try {
-    const user = await getOrCreateDefaultUser();
+    const user = await User.findById(req.userId).select('-password');
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
     res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -38,7 +21,9 @@ router.get('/', async (req, res) => {
 // POST /api/user/checkin - "I'm Home" Action
 router.post('/checkin', async (req, res) => {
   try {
-    const user = await getOrCreateDefaultUser();
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
     const today = new Date().toISOString().split('T')[0];
 
     let streakIncreased = false;
@@ -75,12 +60,15 @@ router.post('/checkin', async (req, res) => {
     checkAndAwardBadges(user);
     await user.save();
 
+    const userJson = user.toObject();
+    delete userJson.password;
+
     res.json({
       success: true,
       message,
       streakIncreased,
       currentStreak: user.currentStreak,
-      user
+      user: userJson
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -90,25 +78,32 @@ router.post('/checkin', async (req, res) => {
 // PUT /api/user/profile
 router.put('/profile', async (req, res) => {
   try {
-    const user = await getOrCreateDefaultUser();
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
     const { name, settings } = req.body;
 
-    if (name) user.name = name;
+    if (name) user.name = name.trim();
     if (settings) {
       user.settings = { ...user.settings, ...settings };
     }
 
     await user.save();
-    res.json({ success: true, user });
+    const userJson = user.toObject();
+    delete userJson.password;
+
+    res.json({ success: true, user: userJson });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// POST /api/user/simulate-streak - Quick developer / demo helper
+// POST /api/user/simulate-streak - Developer / demo helper
 router.post('/simulate-streak', async (req, res) => {
   try {
-    const user = await getOrCreateDefaultUser();
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
     const { targetStreak, targetCredits } = req.body;
 
     if (targetStreak !== undefined) {
@@ -125,7 +120,14 @@ router.post('/simulate-streak', async (req, res) => {
     checkAndAwardBadges(user);
     await user.save();
 
-    res.json({ success: true, user, message: `Simulated to Streak ${user.currentStreak}, Credits ${user.totalCredits} (${user.level})` });
+    const userJson = user.toObject();
+    delete userJson.password;
+
+    res.json({
+      success: true,
+      user: userJson,
+      message: `Simulated to Streak ${user.currentStreak}, Credits ${user.totalCredits} (${user.level})`
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

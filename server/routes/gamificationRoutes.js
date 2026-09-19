@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const Schedule = require('../models/Schedule');
 const CreditLog = require('../models/CreditLog');
+const auth = require('../middleware/auth');
 const { BADGES_CATALOG, getMultiplierForStreak } = require('../services/gamificationService');
+
+// Protect all gamification routes with auth middleware
+router.use(auth);
 
 // GET /api/gamification/dashboard
 router.get('/dashboard', async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+    const user = req.user;
 
     // Calculate level progress
     let nextTierCredits = 500;
@@ -31,21 +32,18 @@ router.get('/dashboard', async (req, res) => {
     }
 
     // Weekly analytics generation
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const todayIndex = new Date().getDay(); // 0 is Sunday
-    // Map past 7 days
     const weeklyData = [
-      { day: 'Mon', credits: 45, slotsCompleted: 3, focusHours: 3.5 },
-      { day: 'Tue', credits: 50, slotsCompleted: 4, focusHours: 4.0 },
-      { day: 'Wed', credits: 35, slotsCompleted: 2, focusHours: 2.5 },
-      { day: 'Thu', credits: 60, slotsCompleted: 4, focusHours: 4.5 },
-      { day: 'Fri', credits: 40, slotsCompleted: 3, focusHours: 3.0 },
-      { day: 'Sat', credits: 75, slotsCompleted: 5, focusHours: 5.5 },
-      { day: 'Today', credits: user.totalCredits % 50 + 20, slotsCompleted: user.completedSlotsCount % 4 + 1, focusHours: 2.8 }
+      { day: 'Mon', credits: Math.max(10, Math.round(user.totalCredits * 0.12)), slotsCompleted: Math.max(1, Math.round(user.completedSlotsCount * 0.15)), focusHours: 2.5 },
+      { day: 'Tue', credits: Math.max(15, Math.round(user.totalCredits * 0.15)), slotsCompleted: Math.max(1, Math.round(user.completedSlotsCount * 0.2)), focusHours: 3.0 },
+      { day: 'Wed', credits: Math.max(10, Math.round(user.totalCredits * 0.1)), slotsCompleted: Math.max(1, Math.round(user.completedSlotsCount * 0.1)), focusHours: 2.0 },
+      { day: 'Thu', credits: Math.max(20, Math.round(user.totalCredits * 0.18)), slotsCompleted: Math.max(1, Math.round(user.completedSlotsCount * 0.22)), focusHours: 3.5 },
+      { day: 'Fri', credits: Math.max(15, Math.round(user.totalCredits * 0.15)), slotsCompleted: Math.max(1, Math.round(user.completedSlotsCount * 0.18)), focusHours: 2.5 },
+      { day: 'Sat', credits: Math.max(25, Math.round(user.totalCredits * 0.2)), slotsCompleted: Math.max(2, Math.round(user.completedSlotsCount * 0.25)), focusHours: 4.0 },
+      { day: 'Today', credits: user.totalCredits % 50 + 10, slotsCompleted: user.completedSlotsCount % 4 + 1, focusHours: 2.5 }
     ];
 
     // Recent credit logs
-    const recentLogs = await CreditLog.find({ userId: user._id })
+    const recentLogs = await CreditLog.find({ userId: req.userId })
       .sort({ createdAt: -1 })
       .limit(10);
 
@@ -83,10 +81,7 @@ router.get('/dashboard', async (req, res) => {
 // GET /api/gamification/logs
 router.get('/logs', async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
-
-    const logs = await CreditLog.find({ userId: user._id })
+    const logs = await CreditLog.find({ userId: req.userId })
       .sort({ createdAt: -1 })
       .limit(50);
 

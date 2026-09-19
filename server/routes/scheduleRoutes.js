@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/Schedule');
-const User = require('../models/User');
+const auth = require('../middleware/auth');
+
+// Protect all schedule routes with auth middleware
+router.use(auth);
 
 // Helper to get today's date string YYYY-MM-DD
 function getTodayString() {
@@ -11,20 +14,16 @@ function getTodayString() {
 // GET /api/schedules/today
 router.get('/today', async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
-
     const today = getTodayString();
-    let schedule = await Schedule.findOne({ userId: user._id, date: today });
+    let schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) {
-      // Provide an inspiring default evening schedule template if none exists
       schedule = await Schedule.create({
-        userId: user._id,
+        userId: req.userId,
         date: today,
         slots: [
           {
-            title: 'Physics Chapter 4 Problems',
+            title: 'Deep Focus & Priority Tasks',
             category: 'study',
             startTime: '17:00',
             endTime: '18:15',
@@ -32,7 +31,7 @@ router.get('/today', async (req, res) => {
             status: 'pending'
           },
           {
-            title: 'Evening Refresh & Tea Break',
+            title: 'Mindful Break & Hydration',
             category: 'break',
             startTime: '18:15',
             endTime: '18:45',
@@ -40,7 +39,7 @@ router.get('/today', async (req, res) => {
             status: 'pending'
           },
           {
-            title: 'Calculus Assignment & Coding',
+            title: 'Core Assignments & Practice',
             category: 'homework',
             startTime: '18:45',
             endTime: '20:00',
@@ -48,7 +47,7 @@ router.get('/today', async (req, res) => {
             status: 'pending'
           },
           {
-            title: 'Digital Illustration / Sketching',
+            title: 'Skill Development & Creative Review',
             category: 'creative',
             startTime: '20:30',
             endTime: '21:30',
@@ -68,14 +67,11 @@ router.get('/today', async (req, res) => {
 // POST /api/schedules/slots - Add slot to today's schedule
 router.post('/slots', async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
-
     const today = getTodayString();
-    let schedule = await Schedule.findOne({ userId: user._id, date: today });
+    let schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) {
-      schedule = new Schedule({ userId: user._id, date: today, slots: [] });
+      schedule = new Schedule({ userId: req.userId, date: today, slots: [] });
     }
 
     const { title, category, startTime, endTime, durationMinutes } = req.body;
@@ -102,9 +98,8 @@ router.post('/slots', async (req, res) => {
 // PUT /api/schedules/slots/:slotId - Update slot
 router.put('/slots/:slotId', async (req, res) => {
   try {
-    const user = await User.findOne();
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) return res.status(404).json({ success: false, error: 'Schedule not found' });
 
@@ -129,9 +124,8 @@ router.put('/slots/:slotId', async (req, res) => {
 // DELETE /api/schedules/slots/:slotId
 router.delete('/slots/:slotId', async (req, res) => {
   try {
-    const user = await User.findOne();
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) return res.status(404).json({ success: false, error: 'Schedule not found' });
 

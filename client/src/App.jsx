@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard';
 import CertificateView from './components/CertificateView';
 import SettingsModal from './components/SettingsModal';
 import OnboardingModal from './components/OnboardingModal';
+import AuthModal from './components/AuthModal';
 import { api } from './services/api';
 import { sound } from './services/sound';
 import { CheckCircle2, AlertTriangle, Info } from 'lucide-react';
@@ -15,6 +16,7 @@ import { CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 export default function App() {
   const [currentTab, setCurrentTab] = useState('home'); // 'home' | 'schedule' | 'focus' | 'dashboard' | 'certificate'
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(api.isAuthenticated());
   const [schedule, setSchedule] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const [certificateStatus, setCertificateStatus] = useState(null);
@@ -46,10 +48,18 @@ export default function App() {
         api.getCertificateStatus()
       ]);
 
-      if (userRes.success) setUser(userRes.user);
+      if (userRes.success) {
+        setUser(userRes.user);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+        return;
+      }
+
       if (schedRes.success) {
         setSchedule(schedRes.schedule);
-        const inProg = (schedRes.schedule.slots || []).find(s => s.status === 'in_progress');
+        const inProg = (schedRes.schedule?.slots || []).find(s => s.status === 'in_progress');
         setActiveSlot(inProg || null);
       }
       if (dashRes.success) setDashboardData(dashRes);
@@ -62,8 +72,43 @@ export default function App() {
   };
 
   useEffect(() => {
-    loadAppData();
+    if (api.isAuthenticated()) {
+      loadAppData();
+    } else {
+      setLoading(false);
+      setIsAuthenticated(false);
+    }
+
+    const handleUnauthorized = () => {
+      setIsAuthenticated(false);
+      setUser(null);
+      showToast('Session expired. Please sign in again.', 'warning');
+    };
+
+    window.addEventListener('focuspledge:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('focuspledge:unauthorized', handleUnauthorized);
+    };
   }, []);
+
+  const handleAuthSuccess = async (authUser) => {
+    setUser(authUser);
+    setIsAuthenticated(true);
+    setLoading(true);
+    await loadAppData();
+    showToast(`Welcome to FocusPledge, ${authUser.name}!`, 'success');
+  };
+
+  const handleLogout = () => {
+    api.logout();
+    setUser(null);
+    setIsAuthenticated(false);
+    setSchedule(null);
+    setDashboardData(null);
+    setCertificateStatus(null);
+    setActiveSlot(null);
+    showToast('You have been logged out safely.', 'info');
+  };
 
   const handleCheckIn = async () => {
     try {
@@ -178,7 +223,7 @@ export default function App() {
       if (res.success) {
         setUser(res.user);
         if (res.slot && schedule) {
-          const updatedSlots = schedule.slots.map(s => s._id === res.slot._id ? res.slot : s);
+          const updatedSlots = (schedule.slots || []).map(s => s._id === res.slot._id ? res.slot : s);
           setSchedule({ ...schedule, slots: updatedSlots });
         }
         await loadAppData();
@@ -194,6 +239,26 @@ export default function App() {
     showToast('🛡️ Shield held! Zero penalty applied.', 'success');
   };
 
+  // If not authenticated, render the AuthModal
+  if (!isAuthenticated && !loading) {
+    return (
+      <div className="app-container">
+        <AuthModal onAuthSuccess={handleAuthSuccess} />
+        {toast && (
+          <div className="toast-floating" style={{
+            borderColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f43f5e' : '#6366f1',
+            color: toast.type === 'success' ? '#34d399' : toast.type === 'warning' ? '#fb7185' : '#818cf8'
+          }}>
+            {toast.type === 'success' && <CheckCircle2 size={18} />}
+            {toast.type === 'warning' && <AlertTriangle size={18} />}
+            {toast.type === 'info' && <Info size={18} />}
+            <span style={{ color: '#f8fafc' }}>{toast.message}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       
@@ -205,6 +270,7 @@ export default function App() {
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
         onOpenSettings={() => setSettingsOpen(true)}
+        onLogout={handleLogout}
         activeSlot={activeSlot}
       />
 
@@ -212,7 +278,7 @@ export default function App() {
       <main className="main-content">
         {loading ? (
           <div style={{ textAlign: 'center', padding: '100px 0', color: '#818cf8', fontWeight: 600 }}>
-            Loading FocusPledge...
+            Loading your FocusPledge dashboard...
           </div>
         ) : (
           <>

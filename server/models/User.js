@@ -1,13 +1,25 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
+    required: [true, 'Name is required'],
+    trim: true,
     default: 'Alex Rivera'
   },
   email: {
     type: String,
-    default: 'focus.student@pledge.io'
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: 6,
+    select: true
   },
   totalCredits: {
     type: Number,
@@ -71,6 +83,23 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Pre-save hook to hash password if modified
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Method to verify password
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
 // Helper method to compute level from credits
 UserSchema.methods.calculateLevel = function () {
   if (this.totalCredits >= 2000) {
@@ -93,3 +122,4 @@ UserSchema.methods.getStreakMultiplier = function () {
 };
 
 module.exports = mongoose.model('User', UserSchema);
+

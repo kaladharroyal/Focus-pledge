@@ -2,120 +2,201 @@ const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api` 
   : (import.meta.env.PROD ? 'https://focuspledge-api.onrender.com/api' : '/api');
 
+const TOKEN_KEY = 'focuspledge_auth_token';
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function setToken(token) {
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+}
+
+function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+// Wrapper for fetch that injects Authorization header
+async function request(endpoint, options = {}) {
+  const token = getToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({ success: false, error: 'Failed to parse response' }));
+
+  if (response.status === 401) {
+    // If unauthorized, clear invalid token
+    if (token && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/register')) {
+      clearToken();
+      window.dispatchEvent(new CustomEvent('focuspledge:unauthorized'));
+    }
+  }
+
+  return data;
+}
+
 export const api = {
+  // Auth helpers
+  getToken,
+  setToken,
+  clearToken,
+  isAuthenticated: () => Boolean(getToken()),
+
+  // Auth Endpoints
+  register: async (name, email, password) => {
+    const res = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password })
+    });
+    if (res.success && res.token) {
+      setToken(res.token);
+    }
+    return res;
+  },
+
+  login: async (email, password) => {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    if (res.success && res.token) {
+      setToken(res.token);
+    }
+    return res;
+  },
+
+  demoLogin: async () => {
+    const res = await request('/auth/demo', {
+      method: 'POST'
+    });
+    if (res.success && res.token) {
+      setToken(res.token);
+    }
+    return res;
+  },
+
+  getMe: async () => {
+    return request('/auth/me');
+  },
+
+  logout: () => {
+    clearToken();
+  },
+
   // User & Checkin
   getUser: async () => {
-    const res = await fetch(`${API_BASE}/user`);
-    return res.json();
+    return request('/user');
   },
+
   checkIn: async () => {
-    const res = await fetch(`${API_BASE}/user/checkin`, { method: 'POST' });
-    return res.json();
+    return request('/user/checkin', { method: 'POST' });
   },
+
   updateProfile: async (data) => {
-    const res = await fetch(`${API_BASE}/user/profile`, {
+    return request('/user/profile', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    return res.json();
   },
+
   simulateStreak: async (targetStreak, targetCredits) => {
-    const res = await fetch(`${API_BASE}/user/simulate-streak`, {
+    return request('/user/simulate-streak', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ targetStreak, targetCredits })
     });
-    return res.json();
   },
 
   // Schedules & Slots
   getTodaySchedule: async () => {
-    const res = await fetch(`${API_BASE}/schedules/today`);
-    return res.json();
+    return request('/schedules/today');
   },
+
   addSlot: async (slotData) => {
-    const res = await fetch(`${API_BASE}/schedules/slots`, {
+    return request('/schedules/slots', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(slotData)
     });
-    return res.json();
   },
+
   updateSlot: async (slotId, slotData) => {
-    const res = await fetch(`${API_BASE}/schedules/slots/${slotId}`, {
+    return request(`/schedules/slots/${slotId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(slotData)
     });
-    return res.json();
   },
+
   deleteSlot: async (slotId) => {
-    const res = await fetch(`${API_BASE}/schedules/slots/${slotId}`, {
+    return request(`/schedules/slots/${slotId}`, {
       method: 'DELETE'
     });
-    return res.json();
   },
 
   // Focus Sessions & Penalties
   startFocus: async (slotId) => {
-    const res = await fetch(`${API_BASE}/focus/start`, {
+    return request('/focus/start', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slotId })
     });
-    return res.json();
   },
+
   completeFocus: async (slotId) => {
-    const res = await fetch(`${API_BASE}/focus/complete`, {
+    return request('/focus/complete', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slotId })
     });
-    return res.json();
   },
+
   recordPenalty: async (slotId, distractionName) => {
-    const res = await fetch(`${API_BASE}/focus/penalty`, {
+    return request('/focus/penalty', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slotId, distractionName })
     });
-    return res.json();
   },
+
   abandonFocus: async (slotId) => {
-    const res = await fetch(`${API_BASE}/focus/abandon`, {
+    return request('/focus/abandon', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slotId })
     });
-    return res.json();
   },
 
   // Gamification & Dashboard
   getDashboard: async () => {
-    const res = await fetch(`${API_BASE}/gamification/dashboard`);
-    return res.json();
+    return request('/gamification/dashboard');
   },
+
   getCreditLogs: async () => {
-    const res = await fetch(`${API_BASE}/gamification/logs`);
-    return res.json();
+    return request('/gamification/logs');
   },
 
   // Certificate
   getCertificateStatus: async () => {
-    const res = await fetch(`${API_BASE}/certificate/status`);
-    return res.json();
+    return request('/certificate/status');
   },
+
   issueCertificate: async (recipientName) => {
-    const res = await fetch(`${API_BASE}/certificate/issue`, {
+    return request('/certificate/issue', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ recipientName })
     });
-    return res.json();
   },
+
   verifyCertificate: async (certId) => {
-    const res = await fetch(`${API_BASE}/certificate/verify/${certId}`);
-    return res.json();
+    return request(`/certificate/verify/${certId}`);
   }
 };

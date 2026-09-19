@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/Schedule');
-const User = require('../models/User');
+const auth = require('../middleware/auth');
 const {
   awardSlotCompletion,
   applyDistractionPenalty,
   awardDailyCompletionBonus,
   getMultiplierForStreak
 } = require('../services/gamificationService');
+
+// Protect all focus routes with auth middleware
+router.use(auth);
 
 function getTodayString() {
   return new Date().toISOString().split('T')[0];
@@ -17,9 +20,9 @@ function getTodayString() {
 router.post('/start', async (req, res) => {
   try {
     const { slotId } = req.body;
-    const user = await User.findOne();
+    const user = req.user;
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) return res.status(404).json({ success: false, error: 'Schedule not found' });
 
@@ -51,9 +54,9 @@ router.post('/start', async (req, res) => {
 router.post('/complete', async (req, res) => {
   try {
     const { slotId } = req.body;
-    const user = await User.findOne();
+    const user = req.user;
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) return res.status(404).json({ success: false, error: 'Schedule not found' });
 
@@ -78,12 +81,15 @@ router.post('/complete', async (req, res) => {
 
     if (allCompleted && !schedule.isBonusAwarded) {
       schedule.isBonusAwarded = true;
-      const bonusRes = await awardDailyCompletionBonus(user);
+      await awardDailyCompletionBonus(user);
       fullDayBonusAwarded = true;
     }
 
     schedule.totalCreditsEarnedToday = (schedule.totalCreditsEarnedToday || 0) + creditsEarned;
     await schedule.save();
+
+    const userJson = user.toObject();
+    delete userJson.password;
 
     res.json({
       success: true,
@@ -95,7 +101,7 @@ router.post('/complete', async (req, res) => {
       fullDayBonusAwarded,
       slot,
       schedule,
-      user
+      user: userJson
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -106,9 +112,9 @@ router.post('/complete', async (req, res) => {
 router.post('/penalty', async (req, res) => {
   try {
     const { slotId, distractionName } = req.body;
-    const user = await User.findOne();
+    const user = req.user;
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     let slot = null;
     if (schedule && slotId) {
@@ -122,6 +128,9 @@ router.post('/penalty', async (req, res) => {
 
     const { penaltyDeducted, newTotal, log } = await applyDistractionPenalty(user, slot ? slot.title : 'Focus Session');
 
+    const userJson = user.toObject();
+    delete userJson.password;
+
     res.json({
       success: true,
       message: `⚠️ Distraction detected (${distractionName || 'Blocked App'}). -5 credits penalty applied!`,
@@ -129,7 +138,7 @@ router.post('/penalty', async (req, res) => {
       newTotalCredits: newTotal,
       distractionsBlockedCount: user.distractionsBlockedCount,
       slot,
-      user
+      user: userJson
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -140,9 +149,8 @@ router.post('/penalty', async (req, res) => {
 router.post('/abandon', async (req, res) => {
   try {
     const { slotId } = req.body;
-    const user = await User.findOne();
     const today = getTodayString();
-    const schedule = await Schedule.findOne({ userId: user._id, date: today });
+    const schedule = await Schedule.findOne({ userId: req.userId, date: today });
 
     if (!schedule) return res.status(404).json({ success: false, error: 'Schedule not found' });
 

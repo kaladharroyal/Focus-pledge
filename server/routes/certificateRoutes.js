@@ -1,21 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const User = require('../models/User');
 const Certificate = require('../models/Certificate');
+const auth = require('../middleware/auth');
 
-// GET /api/certificate/status - Check certificate eligibility
-router.get('/status', async (req, res) => {
+// GET /api/certificate/status - Check certificate eligibility for logged-in user
+router.get('/status', auth, async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+    const user = req.user;
 
     const isSilverOrAbove = user.level === 'Silver' || user.level === 'Gold' || user.totalCredits >= 500;
     const is21DayStreak = user.currentStreak >= 21 || user.highestStreak >= 21;
     const isEligible = isSilverOrAbove || is21DayStreak;
 
-    // Check if an existing certificate is issued
-    const existingCert = await Certificate.findOne({ userId: user._id }).sort({ createdAt: -1 });
+    // Check if an existing certificate is issued for this specific user
+    const existingCert = await Certificate.findOne({ userId: req.userId }).sort({ createdAt: -1 });
+
+    const userJson = user.toObject();
+    delete userJson.password;
 
     res.json({
       success: true,
@@ -29,18 +31,17 @@ router.get('/status', async (req, res) => {
         streakDaysNeeded: Math.max(0, 21 - user.currentStreak)
       },
       certificate: existingCert,
-      user
+      user: userJson
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// POST /api/certificate/issue - Generate/issue official certificate
-router.post('/issue', async (req, res) => {
+// POST /api/certificate/issue - Generate/issue official certificate for logged-in user
+router.post('/issue', auth, async (req, res) => {
   try {
-    const user = await User.findOne();
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+    const user = req.user;
 
     const isSilverOrAbove = user.level === 'Silver' || user.level === 'Gold' || user.totalCredits >= 500;
     const is21DayStreak = user.currentStreak >= 21 || user.highestStreak >= 21;
@@ -61,7 +62,7 @@ router.post('/issue', async (req, res) => {
 
     const certificate = await Certificate.create({
       certificateId: certCode,
-      userId: user._id,
+      userId: req.userId,
       recipientName: finalName,
       issueDate: new Date(),
       consistencyStreakDays: user.highestStreak || user.currentStreak || 21,
@@ -81,7 +82,7 @@ router.post('/issue', async (req, res) => {
   }
 });
 
-// GET /api/certificate/verify/:certId - Public verification
+// GET /api/certificate/verify/:certId - Public verification (No auth required)
 router.get('/verify/:certId', async (req, res) => {
   try {
     const cert = await Certificate.findOne({ certificateId: req.params.certId.toUpperCase() });

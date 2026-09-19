@@ -10,7 +10,9 @@ import {
   FileCheck2, 
   Settings, 
   Volume2, 
-  VolumeX 
+  VolumeX,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
 import { sound } from '../services/sound';
 
@@ -21,6 +23,7 @@ export default function Navbar({
   soundEnabled, 
   setSoundEnabled,
   onOpenSettings,
+  onLogout,
   activeSlot
 }) {
   const toggleSound = () => {
@@ -35,6 +38,14 @@ export default function Navbar({
   const level = user?.level || 'Bronze';
   const multiplier = streak >= 30 ? '2.0x' : streak >= 7 ? '1.5x' : streak >= 3 ? '1.2x' : '1.0x';
   const certUnlocked = level !== 'Bronze' || streak >= 21;
+
+  // Extract initials
+  const initials = (user?.name || 'User')
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 
   const navItems = [
     { id: 'home', label: 'Check-In', icon: Sparkles },
@@ -97,7 +108,7 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Right Status */}
+        {/* Right Status & Account */}
         <div className="navbar-actions">
           
           <div className="status-badge streak" title="Current Daily Streak">
@@ -127,6 +138,24 @@ export default function Navbar({
           >
             <Settings size={16} />
           </button>
+
+          {/* User Profile Pill & Logout */}
+          {user && (
+            <div className="user-profile-badge" title={`Signed in as ${user.name} (${user.email})`}>
+              <div className="user-avatar-initials">
+                {initials}
+              </div>
+              <span className="user-nav-name">{user.name.split(' ')[0]}</span>
+              <button
+                onClick={onLogout}
+                className="user-logout-btn"
+                title="Log out of account"
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          )}
+
         </div>
 
       </div>
