@@ -1413,6 +1413,10 @@ export default function KageCanvas({ onProgress, onLoaded }) {
       renderer.render(scene, camera);
     };
 
+    // Notify landing page loader that 3D sanctuary is built and ready
+    if (typeof onProgress === 'function') onProgress(100, 'SANCTUARY READY');
+    if (typeof onLoaded === 'function') onLoaded();
+
     animate();
 
     return () => {

@@ -51,6 +51,11 @@ async function request(endpoint, options = {}) {
 }
 
 export const api = {
+  // Silent health check / warm-up ping for cold-starting backends
+  warmUp: () => {
+    fetch(`${API_BASE.replace(/\/api$/, '')}/api/health`, { method: 'GET' }).catch(() => {});
+  },
+
   // Auth helpers
   getToken,
   setToken,

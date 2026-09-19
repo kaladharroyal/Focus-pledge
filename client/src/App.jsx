@@ -73,6 +73,9 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Initiate background warm-up for Render API
+    api.warmUp();
+
     if (api.isAuthenticated()) {
       loadAppData();
     } else {
