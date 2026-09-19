@@ -16,30 +16,30 @@ import {
 import { sound } from '../services/sound';
 
 const CATEGORIES = [
-  { id: 'study', label: 'Study', icon: BookOpen, color: '#818cf8' },
-  { id: 'homework', label: 'Homework', icon: Code, color: '#60a5fa' },
-  { id: 'project', label: 'Projects', icon: Layers, color: '#22d3ee' },
-  { id: 'creative', label: 'Creative', icon: Palette, color: '#c084fc' },
-  { id: 'break', label: 'Break', icon: Coffee, color: '#34d399' },
-  { id: 'routine', label: 'Routine', icon: Clock, color: '#fbbf24' },
+  { id: 'study', label: 'Study • 学問', icon: BookOpen, color: '#f43f5e' },
+  { id: 'homework', label: 'Homework • 課題', icon: Code, color: '#fb923c' },
+  { id: 'project', label: 'Project • 創造', icon: Layers, color: '#38bdf8' },
+  { id: 'creative', label: 'Creative • 技芸', icon: Palette, color: '#c084fc' },
+  { id: 'break', label: 'Zen Break • 休息', icon: Coffee, color: '#34d399' },
+  { id: 'routine', label: 'Routine • 日課', icon: Clock, color: '#fbbf24' },
 ];
 
 const PRESETS = [
   {
-    name: '📚 Balanced Student',
+    name: '📚 Balanced Scholar',
     slots: [
       { title: 'Math & Physics Problem Sets', category: 'study', startTime: '17:00', endTime: '18:15', durationMinutes: 75 },
-      { title: 'Screen-Free Break & Snack', category: 'break', startTime: '18:15', endTime: '18:45', durationMinutes: 30 },
-      { title: 'Essay & Reading Homework', category: 'homework', startTime: '18:45', endTime: '20:00', durationMinutes: 75 },
-      { title: 'Digital Art & Wind-down', category: 'creative', startTime: '20:30', endTime: '21:30', durationMinutes: 60 }
+      { title: 'Zen Tea Break & Stretch', category: 'break', startTime: '18:15', endTime: '18:45', durationMinutes: 30 },
+      { title: 'Deep Work & Essay Homework', category: 'homework', startTime: '18:45', endTime: '20:00', durationMinutes: 75 },
+      { title: 'Creative Craft & Wind-down', category: 'creative', startTime: '20:30', endTime: '21:30', durationMinutes: 60 }
     ]
   },
   {
     name: '⚡ Exam Sprint',
     slots: [
-      { title: 'Deep Subject Revision', category: 'study', startTime: '17:30', endTime: '19:00', durationMinutes: 90 },
-      { title: 'Recharge Break', category: 'break', startTime: '19:00', endTime: '19:30', durationMinutes: 30 },
-      { title: 'Mock Test & Analysis', category: 'study', startTime: '19:30', endTime: '21:15', durationMinutes: 105 }
+      { title: 'Deep Subject Mastery Revision', category: 'study', startTime: '17:30', endTime: '19:00', durationMinutes: 90 },
+      { title: 'Sanctuary Recharge', category: 'break', startTime: '19:00', endTime: '19:30', durationMinutes: 30 },
+      { title: 'Timed Mock Assessment', category: 'study', startTime: '19:30', endTime: '21:15', durationMinutes: 105 }
     ]
   }
 ];
@@ -59,6 +59,18 @@ export default function ScheduleBuilder({
   const [category, setCategory] = useState('study');
   const [startTime, setStartTime] = useState('17:00');
   const [endTime, setEndTime] = useState('18:00');
+  
+  // Dynamic user routines/presets
+  const [customPresets, setCustomPresets] = useState(() => {
+    try {
+      const saved = localStorage.getItem('focuspledge_custom_routines');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [showSavePresetModal, setShowSavePresetModal] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
 
   const computeDuration = (start, end) => {
     if (!start || !end) return 60;
@@ -102,7 +114,50 @@ export default function ScheduleBuilder({
   const handleApplyPreset = async (preset) => {
     sound.playClick();
     for (const s of preset.slots) {
-      await onAddSlot(s);
+      await onAddSlot({
+        title: s.title,
+        category: s.category,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        durationMinutes: s.durationMinutes || computeDuration(s.startTime, s.endTime)
+      });
+    }
+  };
+
+  const handleSaveCurrentAsPreset = (e) => {
+    e.preventDefault();
+    if (!newPresetName.trim() || !schedule?.slots?.length) return;
+    sound.playClick();
+    const newRoutine = {
+      name: `✨ ${newPresetName.trim()}`,
+      slots: schedule.slots.map(s => ({
+        title: s.title,
+        category: s.category,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        durationMinutes: s.durationMinutes
+      }))
+    };
+    const updated = [...customPresets, newRoutine];
+    setCustomPresets(updated);
+    try {
+      localStorage.setItem('focuspledge_custom_routines', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    setNewPresetName('');
+    setShowSavePresetModal(false);
+  };
+
+  const handleDeleteCustomPreset = (presetName, e) => {
+    e.stopPropagation();
+    sound.playClick();
+    const updated = customPresets.filter(p => p.name !== presetName);
+    setCustomPresets(updated);
+    try {
+      localStorage.setItem('focuspledge_custom_routines', JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -118,6 +173,7 @@ export default function ScheduleBuilder({
 
   const slots = schedule?.slots || [];
   const totalPlannedMinutes = slots.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
+  const allPresets = [...PRESETS, ...customPresets];
 
   return (
     <div className="page-wrapper">
@@ -125,50 +181,136 @@ export default function ScheduleBuilder({
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>Daily Schedule Builder</h2>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#fda4af', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+            <Sparkles size={13} />
+            <span>修練計画 • DAILY FOCUS PROTOCOL</span>
+          </div>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>Daily Focus Protocol</h2>
           <p style={{ color: '#94a3b8', fontSize: '0.88rem' }}>
-            Structure your evening into focused time blocks. Start focus mode to guard against distractions.
+            Structure your evening into disciplined time blocks. Launch focus mode to activate the distraction shield.
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setShowAddForm(true);
-            setEditingSlotId(null);
-            setTitle('');
-            sound.playClick();
-          }}
-          className="btn btn-primary"
-        >
-          <Plus size={16} />
-          <span>Add Time Slot</span>
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {slots.length > 0 && (
+            <button
+              onClick={() => {
+                setShowSavePresetModal(true);
+                sound.playClick();
+              }}
+              className="btn btn-secondary"
+              style={{ fontSize: '0.85rem' }}
+            >
+              <span>Save As Routine</span>
+            </button>
+          )}
+          <button
+            onClick={() => {
+              setShowAddForm(true);
+              setEditingSlotId(null);
+              setTitle('');
+              sound.playClick();
+            }}
+            className="btn btn-primary"
+          >
+            <Plus size={16} />
+            <span>Add Focus Block</span>
+          </button>
+        </div>
       </div>
 
+      {/* Save Routine Modal */}
+      {showSavePresetModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div className="card" style={{ maxWidth: '420px', width: '100%', padding: '24px', border: '1px solid rgba(244,63,94,0.3)' }}>
+            <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Save Routine Template</h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.82rem', marginBottom: '16px' }}>
+              Save your current {slots.length} time blocks into a dynamic custom routine template.
+            </p>
+            <form onSubmit={handleSaveCurrentAsPreset}>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="e.g. My Evening Coding Mastery"
+                value={newPresetName}
+                onChange={(e) => setNewPresetName(e.target.value)}
+                autoFocus
+                style={{ width: '100%', marginBottom: '16px' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowSavePresetModal(false)}
+                  className="btn btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!newPresetName.trim()}
+                  className="btn btn-primary"
+                >
+                  Save Template
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Quick Summary & Presets Bar */}
-      <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.85rem' }}>
+      <div className="card" style={{ padding: '16px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '0.85rem' }}>
           <div>
-            <span style={{ color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>Slots</span>
+            <span style={{ color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, display: 'block', letterSpacing: '0.04em' }}>Planned Blocks</span>
             <strong style={{ fontSize: '1.1rem' }}>{slots.length} Blocks</strong>
           </div>
           <div>
-            <span style={{ color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>Total Time</span>
-            <strong style={{ color: '#818cf8', fontSize: '1.1rem' }}>{Math.floor(totalPlannedMinutes / 60)}h {totalPlannedMinutes % 60}m</strong>
+            <span style={{ color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, display: 'block', letterSpacing: '0.04em' }}>Total Devotion</span>
+            <strong style={{ color: '#fda4af', fontSize: '1.1rem' }}>{Math.floor(totalPlannedMinutes / 60)}h {totalPlannedMinutes % 60}m</strong>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Load Template:</span>
-          {PRESETS.map((p, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleApplyPreset(p)}
-              className="btn btn-secondary"
-              style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-            >
-              {p.name}
-            </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.78rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 700 }}>Routines:</span>
+          {allPresets.map((p, idx) => (
+            <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <button
+                onClick={() => handleApplyPreset(p)}
+                className="btn btn-secondary"
+                style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                title={`Load ${p.slots.length} slots`}
+              >
+                {p.name}
+              </button>
+              {customPresets.some(cp => cp.name === p.name) && (
+                <button
+                  onClick={(e) => handleDeleteCustomPreset(p.name, e)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#f43f5e',
+                    cursor: 'pointer',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                  title="Delete custom routine"
+                >
+                  <Trash2 size={12} />
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>

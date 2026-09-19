@@ -9,7 +9,8 @@ import {
   Lock, 
   Unlock, 
   Zap, 
-  ArrowUpRight 
+  ArrowUpRight,
+  Sparkles 
 } from 'lucide-react';
 import { sound } from '../services/sound';
 
@@ -34,6 +35,7 @@ export default function Dashboard({
   const progressPercent = stats.progressPercent || 0;
   const certUnlocked = stats.certificateUnlocked;
 
+  const rankJapanese = level === 'Gold' ? '旗本 Hatamoto' : level === 'Silver' ? '武士 Bushi' : '浪人 Ronin';
   const maxCredits = Math.max(...weeklyData.map(d => d.credits), 70);
 
   return (
@@ -42,9 +44,13 @@ export default function Dashboard({
       {/* Header & Subtabs */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>Focus & Consistency Dashboard</h2>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#fda4af', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+            <Sparkles size={13} />
+            <span>修練録 • MASTERY METRICS & LEDGER</span>
+          </div>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>Discipline & Consistency Dashboard</h2>
           <p style={{ color: '#94a3b8', fontSize: '0.88rem' }}>
-            Track credit gains, streak multipliers, weekly progress, and certificate readiness.
+            Track credit gains, streak multipliers, weekly consistency, and certificate readiness.
           </p>
         </div>
 
@@ -59,13 +65,13 @@ export default function Dashboard({
             onClick={() => { setSubTab('badges'); sound.playClick(); }}
             className={`nav-tab-btn ${subTab === 'badges' ? 'active' : ''}`}
           >
-            Badges ({badges.filter(b => b.unlocked).length}/{badges.length})
+            Seals ({badges.filter(b => b.unlocked).length}/{badges.length})
           </button>
           <button
             onClick={() => { setSubTab('logs'); sound.playClick(); }}
             className={`nav-tab-btn ${subTab === 'logs' ? 'active' : ''}`}
           >
-            Transactions
+            Ledger
           </button>
         </div>
       </div>
@@ -75,18 +81,18 @@ export default function Dashboard({
         
         <div className="stat-box">
           <div className="stat-box-header">
-            <span>Credits</span>
-            <Award size={15} color="#818cf8" />
+            <span>Honor Credits</span>
+            <Award size={15} color="#fb7185" />
           </div>
           <div className="stat-box-value">
-            {totalCredits} <span style={{ fontSize: '0.8rem', color: '#818cf8' }}>({level})</span>
+            {totalCredits} <span style={{ fontSize: '0.8rem', color: '#fda4af' }}>({level})</span>
           </div>
           <div className="stat-box-footer">
             <div style={{ width: '100%' }}>
-              <div style={{ height: '4px', background: 'rgba(255,255,255,0.08)', borderRadius: '2px', overflow: 'hidden', marginBottom: '4px' }}>
-                <div style={{ height: '100%', width: `${progressPercent}%`, background: '#6366f1', borderRadius: '2px' }} />
+              <div style={{ height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden', marginBottom: '4px' }}>
+                <div style={{ height: '100%', width: `${progressPercent}%`, background: 'linear-gradient(90deg, #e11d48, #f59e0b)', borderRadius: '2px' }} />
               </div>
-              <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{progressPercent}% to next tier</span>
+              <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{progressPercent}% to next rank</span>
             </div>
           </div>
         </div>
@@ -108,20 +114,20 @@ export default function Dashboard({
             <span>Completed</span>
             <CheckCircle2 size={15} color="#10b981" />
           </div>
-          <div className="stat-box-value">{stats.completedSlotsCount || 0} <span style={{ fontSize: '0.8rem', color: '#34d399' }}>Slots</span></div>
+          <div className="stat-box-value">{stats.completedSlotsCount || 0} <span style={{ fontSize: '0.8rem', color: '#34d399' }}>Blocks</span></div>
           <div className="stat-box-footer">
-            <span>Consistency: <strong>98%</strong></span>
+            <span>Rank: <strong>{rankJapanese}</strong></span>
           </div>
         </div>
 
         <div className="stat-box">
           <div className="stat-box-header">
-            <span>Guards</span>
-            <ShieldCheck size={15} color="#06b6d4" />
+            <span>Shield</span>
+            <ShieldCheck size={15} color="#38bdf8" />
           </div>
-          <div className="stat-box-value">{stats.distractionsBlockedCount || 0} <span style={{ fontSize: '0.8rem', color: '#22d3ee' }}>Blocked</span></div>
+          <div className="stat-box-value">{stats.distractionsBlockedCount || 0} <span style={{ fontSize: '0.8rem', color: '#38bdf8' }}>Guarded</span></div>
           <div className="stat-box-footer">
-            <span>Protected: <strong>100%</strong></span>
+            <span>Integrity: <strong>100%</strong></span>
           </div>
         </div>
 
@@ -135,10 +141,10 @@ export default function Dashboard({
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <div>
-                <h3 style={{ fontSize: '1.15rem' }}>7-Day Productivity Flow</h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Credits earned per day</p>
+                <h3 style={{ fontSize: '1.15rem' }}>7-Day Focus Momentum</h3>
+                <p style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Honor credits earned per evening</p>
               </div>
-              <span style={{ fontSize: '0.78rem', color: '#818cf8', fontWeight: 600 }}>• Weekly Activity</span>
+              <span style={{ fontSize: '0.78rem', color: '#fda4af', fontWeight: 600 }}>• Weekly Activity</span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '12px', height: '160px', alignItems: 'flex-end', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
@@ -146,8 +152,8 @@ export default function Dashboard({
                 const heightPercent = Math.max(16, Math.round((d.credits / maxCredits) * 100));
                 return (
                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#818cf8', fontWeight: 700 }}>+{d.credits}</span>
-                    <div style={{ width: '100%', maxWidth: '32px', height: `${heightPercent}%`, background: 'linear-gradient(180deg, #818cf8, #4f46e5)', borderRadius: '6px 6px 0 0' }} />
+                    <span style={{ fontSize: '0.72rem', color: '#fda4af', fontWeight: 700 }}>+{d.credits}</span>
+                    <div style={{ width: '100%', maxWidth: '32px', height: `${heightPercent}%`, background: 'linear-gradient(180deg, #e11d48, #9f1239)', borderRadius: '6px 6px 0 0', boxShadow: '0 0 12px rgba(225,29,72,0.3)' }} />
                     <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>{d.day}</span>
                   </div>
                 );
@@ -156,14 +162,14 @@ export default function Dashboard({
           </div>
 
           {/* Certificate Promo Card */}
-          <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(17,23,38,0.9))' }}>
+          <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', background: 'linear-gradient(135deg, rgba(225,29,72,0.1), rgba(12,17,26,0.9))', borderColor: 'rgba(225,29,72,0.25)' }}>
             <div>
-              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#f59e0b', display: 'block', marginBottom: '4px' }}>Official Credential</span>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#f59e0b', display: 'block', marginBottom: '4px', letterSpacing: '0.04em' }}>Official Sanctuary Credential</span>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '4px' }}>Time Management Consistency Certificate</h3>
               <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
                 {certUnlocked 
                   ? '🎉 Certificate unlocked! Ready for preview and high-resolution PDF download.' 
-                  : `Locked. Reach Silver Level (500 pts) or a 21-day streak to unlock. Currently: ${totalCredits} pts, Day ${currentStreak}.`}
+                  : `Locked. Reach Bushi Level (500 pts) or a 21-day streak to unlock. Currently: ${totalCredits} pts, Day ${currentStreak}.`}
               </p>
             </div>
 
@@ -189,7 +195,8 @@ export default function Dashboard({
               style={{
                 padding: '16px',
                 opacity: b.unlocked ? 1 : 0.45,
-                borderColor: b.unlocked ? 'rgba(99, 102, 241, 0.4)' : 'rgba(255,255,255,0.06)'
+                borderColor: b.unlocked ? 'rgba(225, 29, 72, 0.4)' : 'rgba(255,255,255,0.06)',
+                boxShadow: b.unlocked ? '0 0 20px rgba(225, 29, 72, 0.15)' : 'none'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>

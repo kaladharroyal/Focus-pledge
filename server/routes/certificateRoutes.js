@@ -54,7 +54,7 @@ router.post('/issue', auth, async (req, res) => {
     }
 
     const { recipientName } = req.body;
-    const finalName = (recipientName && recipientName.trim()) || user.name || 'Alex Rivera';
+    const finalName = (recipientName && recipientName.trim()) || user.name || 'Pledge Scholar';
 
     // Unique Certificate Serial Number e.g. FP-2026-9A82F1
     const certCode = 'FP-' + new Date().getFullYear() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();

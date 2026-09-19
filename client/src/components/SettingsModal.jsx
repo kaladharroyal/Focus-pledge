@@ -50,17 +50,17 @@ export default function SettingsModal({
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Settings size={18} color="#818cf8" />
-            <h3 style={{ fontSize: '1.15rem' }}>Settings & Simulation</h3>
+            <Settings size={18} color="#fb7185" />
+            <h3 style={{ fontSize: '1.15rem' }}>設定 • Settings & Dev Simulation</h3>
           </div>
           <button onClick={onClose} style={{ color: '#94a3b8' }}>✕</button>
         </div>
 
         {/* Distraction List */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '8px' }}>
-            <span>Blocked Apps Guard</span>
-            <span>{blockedApps.length} active</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: '#fda4af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+            <span>Blocked Distraction Shield</span>
+            <span style={{ color: '#94a3b8' }}>{blockedApps.length} active</span>
           </div>
 
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
@@ -81,7 +81,7 @@ export default function SettingsModal({
               <span
                 key={a}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
                   padding: '4px 10px',
                   borderRadius: '6px',
@@ -98,10 +98,51 @@ export default function SettingsModal({
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-          <button onClick={onClose} className="btn btn-primary">
-            Done
-          </button>
+        {/* Simulation Controls for Quick Testing */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#f59e0b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+            <Zap size={14} />
+            <span>Developer Time Machine</span>
+          </div>
+          <p style={{ fontSize: '0.78rem', color: '#94a3b8', marginBottom: '12px' }}>
+            Jump ahead in streak days and credits to test unlock levels and certificate generation:
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            <button
+              onClick={() => handleSimulate(7, 250)}
+              className="btn btn-secondary"
+              style={{ padding: '8px', fontSize: '0.78rem' }}
+            >
+              Day 7 (1.5x)
+            </button>
+            <button
+              onClick={() => handleSimulate(21, 600)}
+              className="btn btn-secondary"
+              style={{ padding: '8px', fontSize: '0.78rem', borderColor: 'rgba(217, 119, 6, 0.4)', color: '#fcd34d' }}
+            >
+              Day 21 (Cert 🎓)
+            </button>
+            <button
+              onClick={() => handleSimulate(35, 2200)}
+              className="btn btn-secondary"
+              style={{ padding: '8px', fontSize: '0.78rem', borderColor: 'rgba(225, 29, 72, 0.4)', color: '#fda4af' }}
+            >
+              Day 35 (Gold 👑)
+            </button>
+          </div>
+
+          {msg && (
+            <p style={{ color: '#34d399', fontSize: '0.82rem', marginTop: '10px', textAlign: 'center', fontWeight: 600 }}>
+              {msg}
+            </p>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+            <button onClick={onClose} className="btn btn-primary">
+              Done
+            </button>
+          </div>
+
         </div>
 
       </div>

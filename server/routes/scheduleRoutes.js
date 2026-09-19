@@ -21,40 +21,7 @@ router.get('/today', async (req, res) => {
       schedule = await Schedule.create({
         userId: req.userId,
         date: today,
-        slots: [
-          {
-            title: 'Deep Focus & Priority Tasks',
-            category: 'study',
-            startTime: '17:00',
-            endTime: '18:15',
-            durationMinutes: 75,
-            status: 'pending'
-          },
-          {
-            title: 'Mindful Break & Hydration',
-            category: 'break',
-            startTime: '18:15',
-            endTime: '18:45',
-            durationMinutes: 30,
-            status: 'pending'
-          },
-          {
-            title: 'Core Assignments & Practice',
-            category: 'homework',
-            startTime: '18:45',
-            endTime: '20:00',
-            durationMinutes: 75,
-            status: 'pending'
-          },
-          {
-            title: 'Skill Development & Creative Review',
-            category: 'creative',
-            startTime: '20:30',
-            endTime: '21:30',
-            durationMinutes: 60,
-            status: 'pending'
-          }
-        ]
+        slots: []
       });
     }
 

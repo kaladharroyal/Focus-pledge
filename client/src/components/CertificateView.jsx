@@ -12,15 +12,17 @@ export default function CertificateView({
   user, 
   certificateStatus 
 }) {
-  const [recipientName, setRecipientName] = useState(user?.name || 'Alex Rivera');
+  const [recipientName, setRecipientName] = useState(user?.name || '');
   const [copySuccess, setCopySuccess] = useState(false);
 
   const totalCredits = user?.totalCredits || 0;
   const streak = user?.highestStreak || user?.currentStreak || 1;
   const level = user?.level || (totalCredits >= 2000 ? 'Gold' : totalCredits >= 500 ? 'Silver' : 'Bronze');
   const isEligible = (level !== 'Bronze') || (streak >= 21) || certificateStatus?.isEligible;
-  const serialId = `FP-2026-${(totalCredits * 37 + streak * 13).toString(16).toUpperCase().padStart(6, 'X')}`;
-  const issueDateFormatted = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const serialId = certificateStatus?.certificate?.certificateId || `FP-2026-${(user?._id ? user._id.slice(-6) : (totalCredits * 37 + streak * 13).toString(16)).toUpperCase()}`;
+  const issueDateFormatted = certificateStatus?.certificate?.issueDate 
+    ? new Date(certificateStatus.certificate.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
     if (user?.name) setRecipientName(user.name);
@@ -148,7 +150,7 @@ export default function CertificateView({
               This credential is conferred upon
             </p>
             <h2 style={{ fontSize: '2.2rem', color: '#1e1b4b', borderBottom: '2px solid rgba(212, 175, 55, 0.4)', paddingBottom: '6px', display: 'inline-block', minWidth: '300px', marginBottom: '12px' }}>
-              {recipientName || 'Alex Rivera'}
+              {recipientName || user?.name || 'Focus Scholar'}
             </h2>
             <p style={{ fontSize: '0.75rem', lineHeight: '1.6', color: '#44403c', maxWidth: '560px', margin: '0 auto' }}>
               For demonstrating exemplary focus discipline, habit consistency, and self-scheduling rigor during post-commute evening blocks, conquering digital distraction and achieving the distinguished <strong style={{ color: '#996515', textTransform: 'uppercase' }}>{level} Tier</strong> milestone.

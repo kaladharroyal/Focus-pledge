@@ -26,23 +26,23 @@ export default function DistractionGuardOverlay({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" style={{ background: 'rgba(23, 7, 12, 0.92)' }}>
-      <div className="modal-content" style={{ maxWidth: '460px', borderColor: 'rgba(244, 63, 94, 0.5)', textAlign: 'center' }}>
+    <div className="modal-backdrop" style={{ background: 'rgba(10, 4, 8, 0.94)' }}>
+      <div className="modal-content" style={{ maxWidth: '460px', borderColor: 'rgba(225, 29, 72, 0.55)', textAlign: 'center', boxShadow: '0 0 50px rgba(225, 29, 72, 0.3)' }}>
         
-        <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(244, 63, 94, 0.15)', border: '2px solid #f43f5e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#fb7185' }}>
+        <div style={{ width: '58px', height: '58px', borderRadius: '50%', background: 'rgba(225, 29, 72, 0.16)', border: '2px solid #e11d48', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#fda4af', boxShadow: '0 0 20px rgba(225, 29, 72, 0.4)' }}>
           <ShieldAlert size={28} />
         </div>
 
         <h3 style={{ fontSize: '1.4rem', color: '#ffffff', marginBottom: '8px' }}>
-          Distraction Guard Triggered!
+          Distraction Shield Triggered!
         </h3>
         <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginBottom: '16px' }}>
-          You attempted to open <strong style={{ color: '#fb7185' }}>{distractionName || 'a blocked app'}</strong> during your focus block "{slot?.title || 'Study Block'}".
+          You attempted to breach focus for <strong style={{ color: '#fda4af' }}>{distractionName || 'a blocked app'}</strong> during your focus block "{slot?.title || 'Study Block'}".
         </p>
 
-        <div style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.25)', borderRadius: '10px', padding: '10px 14px', marginBottom: '20px', fontSize: '0.82rem', color: '#fda4af', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+        <div style={{ background: 'rgba(225, 29, 72, 0.12)', border: '1px solid rgba(225, 29, 72, 0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '20px', fontSize: '0.82rem', color: '#fda4af', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
           <ZapOff size={16} />
-          <strong>Risk: -5 Credit Penalty if broken</strong>
+          <strong>Dishonor Risk: -5 Honor Credit Penalty</strong>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -55,7 +55,7 @@ export default function DistractionGuardOverlay({
             style={{ width: '100%', padding: '12px' }}
           >
             <ArrowLeft size={16} />
-            <span>Stay Focused & Resist Distraction ({countdown > 0 ? `${countdown}s` : 'Safe'})</span>
+            <span>Resist & Return to Focus ({countdown > 0 ? `${countdown}s` : 'Protected'})</span>
           </button>
 
           <button

@@ -112,6 +112,16 @@ class SoundEffects {
     }
   }
 
+  // Distraction alert / penalty alias
+  playDistraction() {
+    this.playPenalty();
+  }
+
+  // Soft error buzz
+  playError() {
+    this.playPenalty();
+  }
+
   // Majestic fanfare for certificate unlock & download
   playFanfare() {
     if (!this.enabled) return;

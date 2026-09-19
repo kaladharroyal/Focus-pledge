@@ -278,8 +278,9 @@ export default function App() {
       {/* Main Content */}
       <main className="main-content">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '100px 0', color: '#818cf8', fontWeight: 600 }}>
-            Loading your FocusPledge dashboard...
+          <div style={{ textAlign: 'center', padding: '100px 0', color: '#fda4af', fontWeight: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '28px', height: '28px', border: '2px solid rgba(225,29,72,0.2)', borderTopColor: '#e11d48', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <span>Connecting to Kyoto Sanctuary...</span>
           </div>
         ) : (
           <>
@@ -362,22 +363,22 @@ export default function App() {
       {/* Toast Notification */}
       {toast && (
         <div className="toast-floating" style={{
-          borderColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f43f5e' : '#6366f1',
-          color: toast.type === 'success' ? '#34d399' : toast.type === 'warning' ? '#fb7185' : '#818cf8'
+          borderColor: toast.type === 'success' ? 'rgba(16, 185, 129, 0.4)' : toast.type === 'warning' ? 'rgba(225, 29, 72, 0.5)' : 'rgba(217, 119, 6, 0.4)',
+          color: toast.type === 'success' ? '#34d399' : toast.type === 'warning' ? '#fb7185' : '#fcd34d'
         }}>
-          {toast.type === 'success' && <CheckCircle2 size={18} />}
-          {toast.type === 'warning' && <AlertTriangle size={18} />}
-          {toast.type === 'info' && <Info size={18} />}
+          {toast.type === 'success' && <CheckCircle2 size={16} />}
+          {toast.type === 'warning' && <AlertTriangle size={16} />}
+          {toast.type === 'info' && <Info size={16} />}
           <span style={{ color: '#f8fafc' }}>{toast.message}</span>
         </div>
       )}
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px', textAlign: 'center', fontSize: '0.78rem', color: '#64748b' }}>
-        <div style={{ maxWidth: '1040px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-          <span>FocusPledge © 2026 — Self-Scheduling Focus & Time Management Protocol</span>
-          <button onClick={() => setOnboardingOpen(true)} style={{ color: '#818cf8', fontWeight: 600 }}>
-            How it works & Rules
+      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '20px 24px', textAlign: 'center', fontSize: '0.78rem', color: '#64748b', background: 'rgba(5, 8, 14, 0.85)' }}>
+        <div style={{ maxWidth: '1060px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+          <span>FocusPledge © 2026 — Self-Scheduling Kyoto Focus & Habit Protocol</span>
+          <button onClick={() => setOnboardingOpen(true)} style={{ color: '#fda4af', fontWeight: 600 }}>
+            Sanctuary Rules & How It Works
           </button>
         </div>
       </footer>

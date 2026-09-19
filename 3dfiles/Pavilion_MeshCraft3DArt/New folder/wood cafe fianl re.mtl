@@ -1,0 +1,86 @@
+# Blender 5.1.1 MTL File: 'wood cafe fianl re.blend'
+# www.blender.org
+
+newmtl COLOUM
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/sakura bark/sakura_bark_rough_2k.exr
+
+newmtl floor
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/wood/Wood059_2K-JPG_Roughness.jpg
+
+newmtl roof_metal
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/metal/Metal021_2K-JPG_Roughness.jpg
+map_refl texture/metal/Metal021_2K-JPG_Metalness.jpg
+map_Bump -bm 1.000000 texture/metal/Metal021_2K-JPG_NormalGL.jpg
+
+newmtl roof_round_wood
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/wood/Wood059_2K-JPG_Roughness.jpg
+
+newmtl seat
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/wood/Wood059_2K-JPG_Roughness.jpg
+map_Bump -bm 1.000000 texture/wood/Wood059_2K-JPG_NormalGL.jpg
+
+newmtl side_trunk
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 0.913803 0.927733
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/palm texture/palm_tree_bark_rough_1k.exr
+
+newmtl table_top
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/wood/Wood059_2K-JPG_Roughness.jpg
+
+newmtl wall
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Ns texture/wood/Wood059_2K-JPG_Roughness.jpg
+map_Bump -bm 1.000000 texture/wood/Wood059_2K-JPG_NormalGL.jpg

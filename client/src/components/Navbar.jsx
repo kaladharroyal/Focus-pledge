@@ -36,6 +36,7 @@ export default function Navbar({
   const streak = user?.currentStreak || 1;
   const credits = user?.totalCredits || 0;
   const level = user?.level || 'Bronze';
+  const rankLabel = level === 'Gold' ? 'Hatamoto 旗本' : level === 'Silver' ? 'Bushi 武士' : 'Ronin 浪人';
   const multiplier = streak >= 30 ? '2.0x' : streak >= 7 ? '1.5x' : streak >= 3 ? '1.2x' : '1.0x';
   const certUnlocked = level !== 'Bronze' || streak >= 21;
 
@@ -48,18 +49,20 @@ export default function Navbar({
     .slice(0, 2);
 
   const navItems = [
-    { id: 'home', label: 'Check-In', icon: Sparkles },
-    { id: 'schedule', label: 'Schedule', icon: Calendar },
+    { id: 'home', label: 'Check-In', kanji: '儀礼', icon: Sparkles },
+    { id: 'schedule', label: 'Schedule', kanji: '計画', icon: Calendar },
     { 
       id: 'focus', 
       label: activeSlot ? 'Focusing' : 'Focus', 
+      kanji: '集中',
       icon: Timer,
       badge: activeSlot ? 'LIVE' : null 
     },
-    { id: 'dashboard', label: 'Stats', icon: BarChart3 },
+    { id: 'dashboard', label: 'Stats', kanji: '記録', icon: BarChart3 },
     { 
       id: 'certificate', 
       label: 'Certificate', 
+      kanji: '免状',
       icon: FileCheck2,
       badge: certUnlocked ? 'UNLOCKED' : null 
     }
@@ -96,7 +99,7 @@ export default function Navbar({
                 }}
                 className={`nav-tab-btn ${isActive ? 'active' : ''}`}
               >
-                <Icon size={16} />
+                <Icon size={15} />
                 <span>{item.label}</span>
                 {item.badge && (
                   <span className={`nav-pill-badge ${item.badge.toLowerCase()}`}>
@@ -111,16 +114,16 @@ export default function Navbar({
         {/* Right Status & Account */}
         <div className="navbar-actions">
           
-          <div className="status-badge streak" title="Current Daily Streak">
-            <Flame size={15} color="#f59e0b" />
+          <div className="status-badge streak" title="Current Daily Discipline Streak">
+            <Flame size={14} color="#f59e0b" />
             <span>Day {streak}</span>
             <span style={{ opacity: 0.8, fontSize: '0.7rem' }}>({multiplier})</span>
           </div>
 
-          <div className="status-badge credits" title="Productivity Credits">
-            <Award size={15} color="#818cf8" />
+          <div className="status-badge credits" title={`Honor Credits: ${credits} • Rank: ${rankLabel}`}>
+            <Award size={14} color="#fb7185" />
             <span>{credits} pts</span>
-            <span style={{ textTransform: 'uppercase', fontSize: '0.68rem', opacity: 0.85 }}>{level}</span>
+            <span style={{ textTransform: 'uppercase', fontSize: '0.68rem', opacity: 0.9, letterSpacing: '0.04em' }}>{level}</span>
           </div>
 
           <button
@@ -128,7 +131,7 @@ export default function Navbar({
             className="icon-btn"
             title={soundEnabled ? 'Mute sound' : 'Enable sound'}
           >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
           </button>
 
           <button
@@ -136,7 +139,7 @@ export default function Navbar({
             className="icon-btn"
             title="Settings & Simulation"
           >
-            <Settings size={16} />
+            <Settings size={15} />
           </button>
 
           {/* User Profile Pill & Logout */}
@@ -151,7 +154,7 @@ export default function Navbar({
                 className="user-logout-btn"
                 title="Log out of account"
               >
-                <LogOut size={14} />
+                <LogOut size={13} />
               </button>
             </div>
           )}

@@ -7,54 +7,9 @@ const auth = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'focuspledge_jwt_secure_secret_key_2026';
 
+// Helper to generate JWT token
 function generateToken(userId) {
   return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '30d' });
-}
-
-// Helper to seed initial starter schedule for a new user
-async function seedStarterSchedule(userId) {
-  const today = new Date().toISOString().split('T')[0];
-  const existing = await Schedule.findOne({ userId, date: today });
-  if (!existing) {
-    await Schedule.create({
-      userId,
-      date: today,
-      slots: [
-        {
-          title: 'Deep Focus & Priority Tasks',
-          category: 'study',
-          startTime: '17:00',
-          endTime: '18:15',
-          durationMinutes: 75,
-          status: 'pending'
-        },
-        {
-          title: 'Mindful Break & Hydration',
-          category: 'break',
-          startTime: '18:15',
-          endTime: '18:45',
-          durationMinutes: 30,
-          status: 'pending'
-        },
-        {
-          title: 'Core Assignments & Practice',
-          category: 'homework',
-          startTime: '18:45',
-          endTime: '20:00',
-          durationMinutes: 75,
-          status: 'pending'
-        },
-        {
-          title: 'Skill Development & Creative Review',
-          category: 'creative',
-          startTime: '20:30',
-          endTime: '21:30',
-          durationMinutes: 60,
-          status: 'pending'
-        }
-      ]
-    });
-  }
 }
 
 // POST /api/auth/register - Register new account
@@ -107,7 +62,6 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
-    await seedStarterSchedule(user._id);
 
     const token = generateToken(user._id);
     const userJson = user.toObject();
@@ -159,9 +113,6 @@ router.post('/login', async (req, res) => {
     const userJson = user.toObject();
     delete userJson.password;
 
-    // Ensure they have today's schedule initialized
-    await seedStarterSchedule(user._id);
-
     res.json({
       success: true,
       message: `Welcome back, ${user.name}!`,
@@ -199,7 +150,6 @@ router.post('/demo', async (req, res) => {
       await user.save();
     }
 
-    await seedStarterSchedule(user._id);
     const token = generateToken(user._id);
     const userJson = user.toObject();
     delete userJson.password;

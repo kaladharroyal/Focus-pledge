@@ -9,24 +9,17 @@ import {
   Music, 
   FastForward, 
   Clock, 
-  Layers 
+  Layers,
+  Sparkles
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from '../services/sound';
 
 const FOCUS_QUOTES = [
-  "“Focus is a muscle. The more you protect it, the sharper you become.”",
-  "“Small daily disciplines lead to massive long-term consistency.”",
-  "“Your future self will thank you for putting down the phone tonight.”",
-  "“Deep work beats distracted hours every single time.”"
-];
-
-const SIMULATED_APPS = [
-  { name: 'Instagram', icon: '📸' },
-  { name: 'TikTok', icon: '🎵' },
-  { name: 'YouTube', icon: '▶️' },
-  { name: 'Mobile Games', icon: '🎮' },
-  { name: 'Reddit / X', icon: '💬' }
+  "“無心 — In the stillness of focus, the blade strikes true.”",
+  "“Discipline is not restriction; it is the master key to total sovereignty.”",
+  "“Small daily devotions compound into unshakeable mastery.”",
+  "“Put down the distractions. Forge the masterpiece tonight.”"
 ];
 
 export default function ActiveFocusSession({ 
@@ -50,7 +43,7 @@ export default function ActiveFocusSession({
   useEffect(() => {
     const qInterval = setInterval(() => {
       setQuoteIdx((prev) => (prev + 1) % FOCUS_QUOTES.length);
-    }, 30000);
+    }, 25000);
     return () => clearInterval(qInterval);
   }, []);
 
@@ -133,7 +126,7 @@ export default function ActiveFocusSession({
   const earnedIfComplete = Math.round(10 * multiplier);
 
   const progressFraction = Math.max(0, Math.min(1, (totalSeconds - secondsRemaining) / totalSeconds));
-  const radius = 95;
+  const radius = 92;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - progressFraction * circumference;
 
@@ -143,14 +136,14 @@ export default function ActiveFocusSession({
 
   if (!slot) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: '60px 20px', maxWidth: '600px', margin: '40px auto' }}>
-        <Clock size={40} color="#818cf8" style={{ margin: '0 auto 16px' }} />
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>No Active Focus Session</h3>
-        <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginBottom: '20px' }}>
-          Select a time slot from your Schedule to begin a guarded focus block.
+      <div className="card" style={{ textAlign: 'center', padding: '60px 24px', maxWidth: '600px', margin: '40px auto' }}>
+        <Clock size={40} color="#fb7185" style={{ margin: '0 auto 16px' }} />
+        <h3 style={{ fontSize: '1.3rem', marginBottom: '8px' }}>No Active Focus Chamber</h3>
+        <p style={{ color: '#94a3b8', fontSize: '0.88rem', marginBottom: '24px' }}>
+          Select a time slot from your Schedule to begin a guarded deep work block.
         </p>
         <button onClick={() => onNavigate('schedule')} className="btn btn-primary">
-          Go to Schedule
+          <span>Open Schedule Builder</span>
         </button>
       </div>
     );
@@ -160,14 +153,14 @@ export default function ActiveFocusSession({
     <div className="page-wrapper" style={{ maxWidth: '720px', margin: '0 auto' }}>
       
       {/* Session Title Header */}
-      <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
+      <div className="card" style={{ padding: '16px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fb7185', border: '1px solid rgba(225, 29, 72, 0.28)' }}>
             <Layers size={18} />
           </div>
           <div>
-            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#818cf8', display: 'block' }}>Guarded Focus Block</span>
-            <strong style={{ fontSize: '1.05rem' }}>{slot.title}</strong>
+            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#fb7185', display: 'block', letterSpacing: '0.04em' }}>無心集中 • Deep Work Chamber</span>
+            <strong style={{ fontSize: '1.1rem' }}>{slot.title}</strong>
           </div>
         </div>
 
@@ -182,8 +175,8 @@ export default function ActiveFocusSession({
             className={`btn ${ambientActive ? 'btn-primary' : 'btn-secondary'}`}
             style={{ padding: '6px 12px', fontSize: '0.78rem' }}
           >
-            <Music size={14} />
-            <span>{ambientActive ? 'Audio ON' : 'Noise Wave'}</span>
+            <Music size={13} />
+            <span>{ambientActive ? 'Audio ON' : 'Zen Noise'}</span>
           </button>
         </div>
       </div>
@@ -192,20 +185,26 @@ export default function ActiveFocusSession({
       <div className="focus-timer-card">
         <div className="timer-svg-container">
           <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 220 220">
+            <defs>
+              <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#e11d48" />
+                <stop offset="100%" stopColor="#f59e0b" />
+              </linearGradient>
+            </defs>
             <circle
               cx="110"
               cy="110"
               r={radius}
-              stroke="rgba(255, 255, 255, 0.08)"
-              strokeWidth="8"
+              stroke="rgba(255, 255, 255, 0.06)"
+              strokeWidth="7"
               fill="transparent"
             />
             <circle
               cx="110"
               cy="110"
               r={radius}
-              stroke="#6366f1"
-              strokeWidth="9"
+              stroke="url(#timerGrad)"
+              strokeWidth="8"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
@@ -216,25 +215,25 @@ export default function ActiveFocusSession({
 
           <div className="timer-center-text">
             <span className="timer-digits">{timeFormatted}</span>
-            <span className="timer-state-label">{isRunning ? 'In Focus' : 'Paused'}</span>
-            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
-              {Math.round(progressFraction * 100)}% Complete
+            <span className="timer-state-label">{isRunning ? 'In Presence' : 'Paused'}</span>
+            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px', fontFamily: 'monospace' }}>
+              {Math.round(progressFraction * 100)}% FORGED
             </span>
           </div>
         </div>
 
-        {/* Motivational quote */}
-        <p style={{ fontStyle: 'italic', fontSize: '0.85rem', color: '#94a3b8', minHeight: '24px' }}>
+        {/* Motivational wisdom quote */}
+        <p style={{ fontStyle: 'italic', fontSize: '0.86rem', color: '#94a3b8', minHeight: '26px', maxWidth: '480px', lineHeight: 1.5 }}>
           {FOCUS_QUOTES[quoteIdx]}
         </p>
 
         {/* Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={() => { setIsRunning(!isRunning); sound.playClick(); }}
             className="btn btn-secondary"
           >
-            {isRunning ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
+            {isRunning ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
             <span>{isRunning ? 'Pause' : 'Resume'}</span>
           </button>
 
@@ -252,12 +251,12 @@ export default function ActiveFocusSession({
             className="btn btn-emerald"
           >
             <CheckCircle2 size={16} />
-            <span>Complete Session</span>
+            <span>Complete Block</span>
           </button>
 
           <button
             onClick={() => {
-              if (window.confirm('Abandon session? No credits will be earned.')) onAbandon(slot._id);
+              if (window.confirm('Abandon session? No honor credits will be earned.')) onAbandon(slot._id);
             }}
             className="icon-btn"
             style={{ color: '#fb7185' }}
@@ -271,24 +270,36 @@ export default function ActiveFocusSession({
       {/* Distraction Guard Simulation Testing Row */}
       <div className="distraction-guard-suite">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: '#fb7185', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ color: '#fb7185', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px', letterSpacing: '0.04em' }}>
             <ShieldAlert size={14} />
-            Distraction Guard Active
+            Distraction Shield Active
           </span>
-          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Test App Interception:</span>
+          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Test Shield Interception:</span>
         </div>
 
         <div className="distraction-btn-row">
-          {SIMULATED_APPS.map((app) => (
-            <button
-              key={app.name}
-              onClick={() => onTriggerDistraction(app.name)}
-              className="distraction-test-btn"
-            >
-              <span>{app.icon}</span>
-              <span style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>{app.name}</span>
-            </button>
-          ))}
+          {(user?.settings?.blockedApps && user.settings.blockedApps.length > 0 
+            ? user.settings.blockedApps 
+            : ['Instagram', 'TikTok', 'YouTube', 'Reddit', 'Mobile Games']
+          ).map((appName) => {
+            const lower = appName.toLowerCase();
+            const icon = lower.includes('insta') ? '📸' :
+                         lower.includes('tik') ? '🎵' :
+                         lower.includes('you') || lower.includes('tube') ? '▶️' :
+                         lower.includes('game') ? '🎮' :
+                         lower.includes('red') || lower.includes('tweet') || lower.includes('x') ? '💬' :
+                         lower.includes('net') || lower.includes('film') ? '🎬' : '🚫';
+            return (
+              <button
+                key={appName}
+                onClick={() => onTriggerDistraction(appName)}
+                className="distraction-test-btn"
+              >
+                <span>{icon}</span>
+                <span style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>{appName}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

@@ -229,7 +229,7 @@ export default function AuthModal({ onAuthSuccess, initialRegister = false }) {
           disabled={loading || demoLoading}
         >
           <Sparkles size={18} className="text-amber-400" />
-          <span>{demoLoading ? 'Launching Demo...' : 'Instant Demo Login (Alex Rivera)'}</span>
+          <span>{demoLoading ? 'Launching Demo...' : 'Instant Demo / Guest Access'}</span>
         </button>
 
         {/* Feature Highlights Pills */}
