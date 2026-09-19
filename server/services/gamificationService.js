@@ -21,9 +21,7 @@ function getMultiplierForStreak(streak) {
 }
 
 function calculateTier(credits) {
-  if (credits >= 2000) return 'Gold';
-  if (credits >= 500) return 'Silver';
-  return 'Bronze';
+  return credits >= 2000 ? 'Gold' : credits >= 500 ? 'Silver' : 'Bronze';
 }
 
 async function awardSlotCompletion(user, slotTitle) {

@@ -98,39 +98,4 @@ router.put('/profile', async (req, res) => {
   }
 });
 
-// POST /api/user/simulate-streak - Developer / demo helper
-router.post('/simulate-streak', async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
-
-    const { targetStreak, targetCredits } = req.body;
-
-    if (targetStreak !== undefined) {
-      user.currentStreak = Number(targetStreak);
-      if (user.currentStreak > user.highestStreak) {
-        user.highestStreak = user.currentStreak;
-      }
-    }
-    if (targetCredits !== undefined) {
-      user.totalCredits = Number(targetCredits);
-      user.level = calculateTier(user.totalCredits);
-    }
-
-    checkAndAwardBadges(user);
-    await user.save();
-
-    const userJson = user.toObject();
-    delete userJson.password;
-
-    res.json({
-      success: true,
-      user: userJson,
-      message: `Simulated to Streak ${user.currentStreak}, Credits ${user.totalCredits} (${user.level})`
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 module.exports = router;

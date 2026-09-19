@@ -114,13 +114,6 @@ export const api = {
     });
   },
 
-  simulateStreak: async (targetStreak, targetCredits) => {
-    return request('/user/simulate-streak', {
-      method: 'POST',
-      body: JSON.stringify({ targetStreak, targetCredits })
-    });
-  },
-
   // Schedules & Slots
   getTodaySchedule: async () => {
     return request('/schedules/today');

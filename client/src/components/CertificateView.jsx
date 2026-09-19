@@ -1,30 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Download, 
+  Printer, 
   Share2, 
   Lock, 
   CheckCircle, 
-  Sparkles, 
-  Shield, 
-  Zap 
+  Shield 
 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import confetti from 'canvas-confetti';
 import { sound } from '../services/sound';
-import { api } from '../services/api';
 
 export default function CertificateView({ 
   user, 
-  certificateStatus, 
-  onRefreshUser,
-  onNavigate 
+  certificateStatus 
 }) {
   const [recipientName, setRecipientName] = useState(user?.name || 'Alex Rivera');
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-
-  const certRef = useRef(null);
 
   const totalCredits = user?.totalCredits || 0;
   const streak = user?.highestStreak || user?.currentStreak || 1;
@@ -37,36 +26,9 @@ export default function CertificateView({
     if (user?.name) setRecipientName(user.name);
   }, [user]);
 
-  const handleDownloadPdf = async () => {
-    if (!certRef.current) return;
-    try {
-      setIsGeneratingPdf(true);
-      sound.playClick();
-
-      const canvas = await html2canvas(certRef.current, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`FocusPledge_Certificate_${recipientName.replace(/\s+/g, '_')}.pdf`);
-      sound.playSuccess();
-    } catch (err) {
-      console.error('PDF error', err);
-    } finally {
-      setIsGeneratingPdf(false);
-    }
+  const handlePrint = () => {
+    sound.playSuccess();
+    window.print();
   };
 
   const handleCopyLink = () => {
@@ -88,7 +50,7 @@ export default function CertificateView({
           Reach <strong>Silver Level (500 pts)</strong> or maintain a <strong>21-Day Streak</strong> to unlock your verified Time Management Consistency Certificate.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px', textAlign: 'left' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', textAlign: 'left' }}>
           <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
             <span style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>Path A: Silver Tier</span>
             <strong style={{ color: '#818cf8', fontSize: '0.95rem' }}>{totalCredits}/500 pts</strong>
@@ -98,21 +60,6 @@ export default function CertificateView({
             <strong style={{ color: '#f59e0b', fontSize: '0.95rem' }}>{streak}/21 Days</strong>
           </div>
         </div>
-
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-          <button
-            onClick={async () => {
-              sound.playClick();
-              await api.simulateStreak(21, 550);
-              await onRefreshUser();
-            }}
-            className="btn btn-emerald"
-            style={{ fontSize: '0.82rem' }}
-          >
-            <Zap size={14} />
-            <span>Simulate Unlock (Silver + 21d Demo)</span>
-          </button>
-        </div>
       </div>
     );
   }
@@ -120,8 +67,8 @@ export default function CertificateView({
   return (
     <div className="page-wrapper">
       
-      {/* Top Banner */}
-      <div className="card" style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      {/* Top Banner (hidden on print) */}
+      <div className="card no-print" style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#f59e0b', display: 'block', marginBottom: '4px' }}>
             ★ Milestone Unlocked
@@ -131,12 +78,11 @@ export default function CertificateView({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
-            onClick={handleDownloadPdf}
-            disabled={isGeneratingPdf}
+            onClick={handlePrint}
             className="btn btn-primary"
           >
-            <Download size={16} />
-            <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download PDF'}</span>
+            <Printer size={16} />
+            <span>Print / Save PDF</span>
           </button>
 
           <button
@@ -149,8 +95,8 @@ export default function CertificateView({
         </div>
       </div>
 
-      {/* Recipient Customizer */}
-      <div className="card" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', fontSize: '0.85rem' }}>
+      {/* Recipient Customizer (hidden on print) */}
+      <div className="card no-print" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', fontSize: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ color: '#94a3b8', fontWeight: 600 }}>Recipient Name:</span>
           <input
@@ -167,9 +113,9 @@ export default function CertificateView({
       </div>
 
       {/* Certificate Canvas Preview */}
-      <div style={{ overflowX: 'auto', padding: '16px 0', display: 'flex', justifyContent: 'center' }}>
+      <div className="printable-certificate-container" style={{ overflowX: 'auto', padding: '16px 0', display: 'flex', justifyContent: 'center' }}>
         <div 
-          ref={certRef}
+          className="printable-certificate-document"
           style={{
             width: '840px',
             minHeight: '580px',

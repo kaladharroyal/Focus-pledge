@@ -98,38 +98,7 @@ export default function SettingsModal({
           </div>
         </div>
 
-        {/* Demo simulator */}
-        <div style={{ background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: '10px', padding: '14px', marginBottom: '16px' }}>
-          <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#818cf8', display: 'block', marginBottom: '6px' }}>
-            ⚡ Demo Testing Shortcuts
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-            <button
-              onClick={() => handleSimulate(1, 40)}
-              className="btn btn-secondary"
-              style={{ padding: '6px 8px', fontSize: '0.72rem' }}
-            >
-              Day 1 (40p)
-            </button>
-            <button
-              onClick={() => handleSimulate(7, 450)}
-              className="btn btn-secondary"
-              style={{ padding: '6px 8px', fontSize: '0.72rem' }}
-            >
-              Day 7 (1.5x)
-            </button>
-            <button
-              onClick={() => handleSimulate(21, 600)}
-              className="btn btn-emerald"
-              style={{ padding: '6px 8px', fontSize: '0.72rem' }}
-            >
-              Silver (Cert Unlocked)
-            </button>
-          </div>
-          {msg && <p style={{ fontSize: '0.75rem', color: '#34d399', marginTop: '6px', textAlign: 'center' }}>{msg}</p>}
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
           <button onClick={onClose} className="btn btn-primary">
             Done
           </button>

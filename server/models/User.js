@@ -102,13 +102,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Helper method to compute level from credits
 UserSchema.methods.calculateLevel = function () {
-  if (this.totalCredits >= 2000) {
-    this.level = 'Gold';
-  } else if (this.totalCredits >= 500) {
-    this.level = 'Silver';
-  } else {
-    this.level = 'Bronze';
-  }
+  this.level = this.totalCredits >= 2000 ? 'Gold' : this.totalCredits >= 500 ? 'Silver' : 'Bronze';
   return this.level;
 };
 
