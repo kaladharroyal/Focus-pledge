@@ -16,8 +16,8 @@ import {
 import { api } from '../services/api';
 import { sound } from '../services/sound';
 
-export default function AuthModal({ onAuthSuccess }) {
-  const [isRegister, setIsRegister] = useState(false);
+export default function AuthModal({ onAuthSuccess, initialRegister = false }) {
+  const [isRegister, setIsRegister] = useState(initialRegister);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

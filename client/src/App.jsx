@@ -9,6 +9,7 @@ import CertificateView from './components/CertificateView';
 import SettingsModal from './components/SettingsModal';
 import OnboardingModal from './components/OnboardingModal';
 import AuthModal from './components/AuthModal';
+import LandingPage from './components/LandingPage';
 import { api } from './services/api';
 import { sound } from './services/sound';
 import { CheckCircle2, AlertTriangle, Info } from 'lucide-react';
@@ -239,11 +240,11 @@ export default function App() {
     showToast('🛡️ Shield held! Zero penalty applied.', 'success');
   };
 
-  // If not authenticated, render the AuthModal
+  // If not authenticated, render the LandingPage
   if (!isAuthenticated && !loading) {
     return (
       <div className="app-container">
-        <AuthModal onAuthSuccess={handleAuthSuccess} />
+        <LandingPage onAuthSuccess={handleAuthSuccess} />
         {toast && (
           <div className="toast-floating" style={{
             borderColor: toast.type === 'success' ? '#10b981' : toast.type === 'warning' ? '#f43f5e' : '#6366f1',
