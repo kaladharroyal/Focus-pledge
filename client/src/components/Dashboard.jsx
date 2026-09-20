@@ -42,7 +42,7 @@ export default function Dashboard({
     <div className="page-wrapper">
       
       {/* Header & Subtabs */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="dashboard-header-row">
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#fda4af', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
             <Sparkles size={13} />
@@ -54,7 +54,7 @@ export default function Dashboard({
           </p>
         </div>
 
-        <div className="nav-tab-list">
+        <div className="nav-tab-list dashboard-subtabs">
           <button
             onClick={() => { setSubTab('overview'); sound.playClick(); }}
             className={`nav-tab-btn ${subTab === 'overview' ? 'active' : ''}`}
@@ -77,7 +77,7 @@ export default function Dashboard({
       </div>
 
       {/* 4 Stats Cards */}
-      <div className="stats-grid-3" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+      <div className="stats-grid-4">
         
         <div className="stat-box">
           <div className="stat-box-header">
@@ -138,23 +138,25 @@ export default function Dashboard({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           {/* Weekly Bar Chart */}
-          <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div className="card weekly-chart-card">
+            <div className="weekly-chart-header">
               <div>
                 <h3 style={{ fontSize: '1.15rem' }}>7-Day Focus Momentum</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Honor credits earned per evening</p>
               </div>
-              <span style={{ fontSize: '0.78rem', color: '#fda4af', fontWeight: 600 }}>• Weekly Activity</span>
+              <span className="weekly-activity-badge">• Weekly Activity</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '12px', height: '160px', alignItems: 'flex-end', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
+            <div className="weekly-chart-grid">
               {weeklyData.map((d, idx) => {
                 const heightPercent = Math.max(16, Math.round((d.credits / maxCredits) * 100));
                 return (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', height: '100%', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '0.72rem', color: '#fda4af', fontWeight: 700 }}>+{d.credits}</span>
-                    <div style={{ width: '100%', maxWidth: '32px', height: `${heightPercent}%`, background: 'linear-gradient(180deg, #e11d48, #9f1239)', borderRadius: '6px 6px 0 0', boxShadow: '0 0 12px rgba(225,29,72,0.3)' }} />
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>{d.day}</span>
+                  <div key={idx} className="weekly-bar-col">
+                    <span className="weekly-bar-value">+{d.credits}</span>
+                    <div className="weekly-bar-track">
+                      <div className="weekly-bar-fill" style={{ height: `${heightPercent}%` }} />
+                    </div>
+                    <span className="weekly-bar-label">{d.day}</span>
                   </div>
                 );
               })}

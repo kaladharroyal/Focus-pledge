@@ -69,24 +69,110 @@ export default function Navbar({
   ];
 
   return (
-    <header className="navbar-root">
-      <div className="navbar-inner">
-        
-        {/* Brand */}
-        <div 
-          onClick={() => { setCurrentTab('home'); sound.playClick(); }}
-          className="brand-logo"
-        >
-          <div className="brand-icon-box">
-            <ShieldCheck size={20} />
+    <>
+      <header className="navbar-root">
+        <div className="navbar-inner">
+          
+          {/* Brand */}
+          <div 
+            onClick={() => { setCurrentTab('home'); sound.playClick(); }}
+            className="brand-logo"
+          >
+            <div className="brand-icon-box">
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <h1 className="brand-title">Focus<span>Pledge</span></h1>
+            </div>
           </div>
-          <div>
-            <h1 className="brand-title">Focus<span>Pledge</span></h1>
-          </div>
-        </div>
 
-        {/* Tab switcher */}
-        <nav className="nav-tab-list">
+          {/* Desktop Tab switcher (hidden on mobile / small screens) */}
+          <nav className="nav-tab-list desktop-nav-tabs">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentTab(item.id);
+                    sound.playClick();
+                  }}
+                  className={`nav-tab-btn ${isActive ? 'active' : ''}`}
+                >
+                  <Icon size={15} />
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className={`nav-pill-badge ${item.badge.toLowerCase()}`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Right Status & Account */}
+          <div className="navbar-actions">
+            
+            <div className="status-badge streak" title="Current Daily Discipline Streak">
+              <Flame size={14} color="#f59e0b" />
+              <span className="badge-text-full">Day {streak}</span>
+              <span className="badge-text-short">{streak}d</span>
+              <span className="badge-multiplier">({multiplier})</span>
+            </div>
+
+            <div className="status-badge credits" title={`Honor Credits: ${credits} • Rank: ${rankLabel}`}>
+              <Award size={14} color="#fb7185" />
+              <span className="badge-text-full">{credits} pts</span>
+              <span className="badge-text-short">{credits}p</span>
+              <span className="badge-rank-tag">{level}</span>
+            </div>
+
+            <button
+              onClick={toggleSound}
+              className="icon-btn"
+              title={soundEnabled ? 'Mute sound' : 'Enable sound'}
+              aria-label={soundEnabled ? 'Mute sound' : 'Enable sound'}
+            >
+              {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+            </button>
+
+            <button
+              onClick={onOpenSettings}
+              className="icon-btn"
+              title="Settings & Simulation"
+              aria-label="Settings & Simulation"
+            >
+              <Settings size={15} />
+            </button>
+
+            {/* User Profile Pill & Logout */}
+            {user && (
+              <div className="user-profile-badge" title={`Signed in as ${user.name} (${user.email})`}>
+                <div className="user-avatar-initials">
+                  {initials}
+                </div>
+                <span className="user-nav-name">{user.name.split(' ')[0]}</span>
+                <button
+                  onClick={onLogout}
+                  className="user-logout-btn"
+                  title="Log out of account"
+                  aria-label="Log out"
+                >
+                  <LogOut size={13} />
+                </button>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      </header>
+
+      {/* Mobile Bottom Dock Navigation (visible on mobile / small tablet) */}
+      <nav className="mobile-bottom-dock" aria-label="Mobile Navigation">
+        <div className="mobile-dock-inner">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
@@ -97,71 +183,22 @@ export default function Navbar({
                   setCurrentTab(item.id);
                   sound.playClick();
                 }}
-                className={`nav-tab-btn ${isActive ? 'active' : ''}`}
+                className={`mobile-dock-btn ${isActive ? 'active' : ''}`}
+                aria-label={item.label}
               >
-                <Icon size={15} />
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span className={`nav-pill-badge ${item.badge.toLowerCase()}`}>
-                    {item.badge}
-                  </span>
-                )}
+                <div className="mobile-dock-icon-wrap">
+                  <Icon size={18} />
+                  {item.badge && (
+                    <span className={`mobile-dock-dot ${item.badge.toLowerCase()}`} />
+                  )}
+                </div>
+                <span className="mobile-dock-label">{item.label}</span>
+                {isActive && <div className="mobile-dock-indicator" />}
               </button>
             );
           })}
-        </nav>
-
-        {/* Right Status & Account */}
-        <div className="navbar-actions">
-          
-          <div className="status-badge streak" title="Current Daily Discipline Streak">
-            <Flame size={14} color="#f59e0b" />
-            <span>Day {streak}</span>
-            <span style={{ opacity: 0.8, fontSize: '0.7rem' }}>({multiplier})</span>
-          </div>
-
-          <div className="status-badge credits" title={`Honor Credits: ${credits} • Rank: ${rankLabel}`}>
-            <Award size={14} color="#fb7185" />
-            <span>{credits} pts</span>
-            <span style={{ textTransform: 'uppercase', fontSize: '0.68rem', opacity: 0.9, letterSpacing: '0.04em' }}>{level}</span>
-          </div>
-
-          <button
-            onClick={toggleSound}
-            className="icon-btn"
-            title={soundEnabled ? 'Mute sound' : 'Enable sound'}
-          >
-            {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-          </button>
-
-          <button
-            onClick={onOpenSettings}
-            className="icon-btn"
-            title="Settings & Simulation"
-          >
-            <Settings size={15} />
-          </button>
-
-          {/* User Profile Pill & Logout */}
-          {user && (
-            <div className="user-profile-badge" title={`Signed in as ${user.name} (${user.email})`}>
-              <div className="user-avatar-initials">
-                {initials}
-              </div>
-              <span className="user-nav-name">{user.name.split(' ')[0]}</span>
-              <button
-                onClick={onLogout}
-                className="user-logout-btn"
-                title="Log out of account"
-              >
-                <LogOut size={13} />
-              </button>
-            </div>
-          )}
-
         </div>
-
-      </div>
-    </header>
+      </nav>
+    </>
   );
 }

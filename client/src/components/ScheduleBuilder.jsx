@@ -179,7 +179,7 @@ export default function ScheduleBuilder({
     <div className="page-wrapper">
       
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="schedule-header-row">
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#fda4af', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
             <Sparkles size={13} />
@@ -191,7 +191,7 @@ export default function ScheduleBuilder({
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="schedule-header-actions">
           {slots.length > 0 && (
             <button
               onClick={() => {
@@ -269,8 +269,8 @@ export default function ScheduleBuilder({
       )}
 
       {/* Quick Summary & Presets Bar */}
-      <div className="card" style={{ padding: '16px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '0.85rem' }}>
+      <div className="card schedule-summary-bar">
+        <div className="summary-metrics-group">
           <div>
             <span style={{ color: '#64748b', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, display: 'block', letterSpacing: '0.04em' }}>Planned Blocks</span>
             <strong style={{ fontSize: '1.1rem' }}>{slots.length} Blocks</strong>
@@ -281,37 +281,30 @@ export default function ScheduleBuilder({
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.78rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 700 }}>Routines:</span>
-          {allPresets.map((p, idx) => (
-            <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <button
-                onClick={() => handleApplyPreset(p)}
-                className="btn btn-secondary"
-                style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-                title={`Load ${p.slots.length} slots`}
-              >
-                {p.name}
-              </button>
-              {customPresets.some(cp => cp.name === p.name) && (
+        <div className="summary-presets-group">
+          <span className="presets-label">Routines:</span>
+          <div className="presets-chips-list">
+            {allPresets.map((p, idx) => (
+              <div key={idx} className="preset-chip-wrapper">
                 <button
-                  onClick={(e) => handleDeleteCustomPreset(p.name, e)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#f43f5e',
-                    cursor: 'pointer',
-                    padding: '2px',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                  title="Delete custom routine"
+                  onClick={() => handleApplyPreset(p)}
+                  className="btn btn-secondary preset-chip-btn"
+                  title={`Load ${p.slots.length} slots`}
                 >
-                  <Trash2 size={12} />
+                  {p.name}
                 </button>
-              )}
-            </div>
-          ))}
+                {customPresets.some(cp => cp.name === p.name) && (
+                  <button
+                    onClick={(e) => handleDeleteCustomPreset(p.name, e)}
+                    className="preset-delete-btn"
+                    title="Delete custom routine"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -342,15 +335,15 @@ export default function ScheduleBuilder({
               >
                 
                 {/* Left info */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div className="slot-left-info">
                   <div className="slot-time-badge">
                     <div>{slot.startTime}</div>
                     <div style={{ color: '#64748b', fontSize: '0.7rem' }}>{slot.endTime}</div>
                   </div>
 
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <strong style={{ fontSize: '0.95rem', textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? '#94a3b8' : '#ffffff' }}>
+                  <div className="slot-details">
+                    <div className="slot-title-row">
+                      <strong className="slot-title-text" style={{ textDecoration: isCompleted ? 'line-through' : 'none', color: isCompleted ? '#94a3b8' : '#ffffff' }}>
                         {slot.title}
                       </strong>
                       <span 
@@ -361,7 +354,7 @@ export default function ScheduleBuilder({
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px', fontSize: '0.78rem', color: '#94a3b8' }}>
+                    <div className="slot-meta-row">
                       <span>⏱️ {slot.durationMinutes || 60}m</span>
                       {isCompleted && <span style={{ color: '#34d399', fontWeight: 700 }}>✓ Earned +{slot.creditsEarned || 10} pts</span>}
                       {isInProgress && <span style={{ color: '#f59e0b', fontWeight: 700 }}>🔥 Active Now</span>}
@@ -373,15 +366,14 @@ export default function ScheduleBuilder({
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="slot-actions">
                   {!isCompleted && !isInProgress && (
                     <button
                       onClick={() => {
                         onStartFocus(slot);
                         sound.playClick();
                       }}
-                      className="btn btn-emerald"
-                      style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                      className="btn btn-emerald slot-main-action-btn"
                     >
                       <Play size={14} fill="currentColor" />
                       <span>Start Focus</span>
@@ -394,21 +386,20 @@ export default function ScheduleBuilder({
                         onNavigate('focus');
                         sound.playClick();
                       }}
-                      className="btn btn-primary"
-                      style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                      className="btn btn-primary slot-main-action-btn"
                     >
                       <span>Resume ⏱️</span>
                     </button>
                   )}
 
                   {isCompleted && (
-                    <span style={{ color: '#34d399', fontSize: '0.8rem', fontWeight: 700, padding: '4px 10px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px' }}>
-                      Completed
+                    <span className="slot-completed-pill">
+                      Completed ✓
                     </span>
                   )}
 
                   {!isCompleted && (
-                    <>
+                    <div className="slot-secondary-actions">
                       <button
                         onClick={() => handleStartEdit(slot)}
                         className="icon-btn"
@@ -426,7 +417,7 @@ export default function ScheduleBuilder({
                       >
                         <Trash2 size={14} />
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
 
@@ -465,7 +456,7 @@ export default function ScheduleBuilder({
                 <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '6px' }}>
                   Category
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                <div className="category-picker-grid">
                   {CATEGORIES.map((cat) => (
                     <button
                       type="button"
@@ -480,7 +471,7 @@ export default function ScheduleBuilder({
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="time-picker-grid">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '6px' }}>
                     Start Time

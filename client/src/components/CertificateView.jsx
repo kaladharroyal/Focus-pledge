@@ -98,51 +98,39 @@ export default function CertificateView({
       </div>
 
       {/* Recipient Customizer (hidden on print) */}
-      <div className="card no-print" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', fontSize: '0.85rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ color: '#94a3b8', fontWeight: 600 }}>Recipient Name:</span>
+      <div className="card no-print cert-customizer-card">
+        <div className="cert-recipient-input-wrap">
+          <span className="cert-input-label">Recipient Name:</span>
           <input
             type="text"
             value={recipientName}
             onChange={(e) => setRecipientName(e.target.value)}
-            style={{ padding: '6px 10px', fontSize: '0.88rem', fontWeight: 700, width: '220px' }}
+            className="cert-name-input"
+            placeholder="Scholar Name"
           />
         </div>
-        <div style={{ display: 'flex', gap: '16px', color: '#64748b' }}>
-          <span>Serial: <strong style={{ color: '#f59e0b', fontFamily: 'monospace' }}>{serialId}</strong></span>
-          <span>Tier: <strong style={{ color: '#ffffff', textTransform: 'uppercase' }}>{level}</strong></span>
+        <div className="cert-meta-tags">
+          <span>Serial: <strong className="serial-code">{serialId}</strong></span>
+          <span>Tier: <strong className="tier-badge">{level}</strong></span>
         </div>
       </div>
 
-      {/* Certificate Canvas Preview */}
-      <div className="printable-certificate-container" style={{ overflowX: 'auto', padding: '16px 0', display: 'flex', justifyContent: 'center' }}>
-        <div 
-          className="printable-certificate-document"
-          style={{
-            width: '840px',
-            minHeight: '580px',
-            background: '#faf8f5',
-            color: '#1c1917',
-            padding: '40px',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            border: '12px double #996515',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-            fontFamily: 'Cinzel, serif'
-          }}
-        >
-          {/* Header */}
-          <div style={{ textAlign: 'center' }}>
-            <span style={{ fontSize: '0.68rem', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#996515', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
-              FocusPledge Academic Productivity Board
-            </span>
-            <h1 style={{ fontSize: '1.65rem', color: '#1c1917', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 800 }}>
-              Time Management Consistency Certificate
-            </h1>
-            <div style={{ width: '120px', height: '2px', background: '#d4af37', margin: '8px auto 0' }} />
-          </div>
+      {/* Certificate Canvas Preview with responsive scaling wrapper */}
+      <div className="printable-certificate-container">
+        <div className="printable-certificate-scaler">
+          <div 
+            className="printable-certificate-document"
+          >
+            {/* Header */}
+            <div className="cert-doc-header-block">
+              <span className="cert-board-title">
+                FocusPledge Academic Productivity Board
+              </span>
+              <h1 className="cert-main-title">
+                Time Management Consistency Certificate
+              </h1>
+              <div className="cert-title-rule" />
+            </div>
 
           {/* Body */}
           <div style={{ textAlign: 'center', margin: 'auto 0', padding: '0 24px' }}>
@@ -194,14 +182,14 @@ export default function CertificateView({
               <div style={{ fontFamily: 'Pinyon Script, cursive', fontSize: '1.6rem', color: '#1e1b4b' }}>
                 Devin S. Alexander
               </div>
-              <div style={{ width: '130px', height: '1px', background: '#d4af37', margin: '2px 0 2px auto' }} />
               <span style={{ fontSize: '0.65rem', color: '#78716c', textTransform: 'uppercase' }}>Productivity Registrar</span>
             </div>
           </div>
 
         </div>
       </div>
-
     </div>
-  );
+
+  </div>
+);
 }

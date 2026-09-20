@@ -153,18 +153,18 @@ export default function ActiveFocusSession({
     <div className="page-wrapper" style={{ maxWidth: '720px', margin: '0 auto' }}>
       
       {/* Session Title Header */}
-      <div className="card" style={{ padding: '16px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fb7185', border: '1px solid rgba(225, 29, 72, 0.28)' }}>
+      <div className="card focus-chamber-header">
+        <div className="focus-chamber-title-block">
+          <div className="focus-chamber-icon">
             <Layers size={18} />
           </div>
           <div>
             <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#fb7185', display: 'block', letterSpacing: '0.04em' }}>無心集中 • Deep Work Chamber</span>
-            <strong style={{ fontSize: '1.1rem' }}>{slot.title}</strong>
+            <strong className="focus-chamber-title-text">{slot.title}</strong>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="focus-chamber-actions">
           <div className="status-badge streak">
             <Flame size={14} color="#f59e0b" />
             <span>+{earnedIfComplete} pts ({multiplier}x)</span>
@@ -172,8 +172,7 @@ export default function ActiveFocusSession({
 
           <button
             onClick={toggleAmbientSound}
-            className={`btn ${ambientActive ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+            className={`btn ${ambientActive ? 'btn-primary' : 'btn-secondary'} focus-ambient-btn`}
           >
             <Music size={13} />
             <span>{ambientActive ? 'Audio ON' : 'Zen Noise'}</span>
@@ -216,22 +215,22 @@ export default function ActiveFocusSession({
           <div className="timer-center-text">
             <span className="timer-digits">{timeFormatted}</span>
             <span className="timer-state-label">{isRunning ? 'In Presence' : 'Paused'}</span>
-            <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px', fontFamily: 'monospace' }}>
+            <span className="timer-progress-percent">
               {Math.round(progressFraction * 100)}% FORGED
             </span>
           </div>
         </div>
 
         {/* Motivational wisdom quote */}
-        <p style={{ fontStyle: 'italic', fontSize: '0.86rem', color: '#94a3b8', minHeight: '26px', maxWidth: '480px', lineHeight: 1.5 }}>
+        <p className="focus-quote-text">
           {FOCUS_QUOTES[quoteIdx]}
         </p>
 
         {/* Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="focus-controls-row">
           <button
             onClick={() => { setIsRunning(!isRunning); sound.playClick(); }}
-            className="btn btn-secondary"
+            className="btn btn-secondary focus-ctrl-btn"
           >
             {isRunning ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
             <span>{isRunning ? 'Pause' : 'Resume'}</span>
@@ -239,7 +238,7 @@ export default function ActiveFocusSession({
 
           <button
             onClick={handleFastForward}
-            className="btn btn-secondary"
+            className="btn btn-secondary focus-ctrl-btn"
             title="Fast forward 5 minutes (Testing)"
           >
             <FastForward size={14} />
@@ -248,7 +247,7 @@ export default function ActiveFocusSession({
 
           <button
             onClick={handleFinish}
-            className="btn btn-emerald"
+            className="btn btn-emerald focus-ctrl-btn focus-complete-btn"
           >
             <CheckCircle2 size={16} />
             <span>Complete Block</span>
@@ -258,9 +257,10 @@ export default function ActiveFocusSession({
             onClick={() => {
               if (window.confirm('Abandon session? No honor credits will be earned.')) onAbandon(slot._id);
             }}
-            className="icon-btn"
+            className="icon-btn focus-abandon-btn"
             style={{ color: '#fb7185' }}
             title="Abandon slot"
+            aria-label="Abandon session"
           >
             <XCircle size={16} />
           </button>
@@ -269,7 +269,7 @@ export default function ActiveFocusSession({
 
       {/* Distraction Guard Simulation Testing Row */}
       <div className="distraction-guard-suite">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="distraction-suite-header">
           <span style={{ color: '#fb7185', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px', letterSpacing: '0.04em' }}>
             <ShieldAlert size={14} />
             Distraction Shield Active

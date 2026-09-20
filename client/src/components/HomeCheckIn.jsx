@@ -199,22 +199,22 @@ export default function HomeCheckIn({
             </div>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '14px' }}>Honor & Reward Matrix</h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ color: '#cbd5e1' }}>🎯 Complete a focus block</span>
-                <strong style={{ color: '#34d399' }}>+10 pts × Multiplier</strong>
+            <div className="rules-matrix-list">
+              <div className="rule-matrix-row">
+                <span className="rule-label">🎯 Complete a focus block</span>
+                <strong className="rule-reward success">+10 pts × Multiplier</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ color: '#cbd5e1' }}>🌟 Complete entire evening</span>
-                <strong style={{ color: '#34d399' }}>+20 Bonus Honor</strong>
+              <div className="rule-matrix-row">
+                <span className="rule-label">🌟 Complete entire evening</span>
+                <strong className="rule-reward success">+20 Bonus Honor</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ color: '#cbd5e1' }}>🔥 Daily Streak Escalation</span>
-                <strong style={{ color: '#fcd34d' }}>3d (1.2x) • 7d (1.5x) • 30d (2.0x)</strong>
+              <div className="rule-matrix-row">
+                <span className="rule-label">🔥 Daily Streak Escalation</span>
+                <strong className="rule-reward highlight">3d (1.2x) • 7d (1.5x) • 30d (2.0x)</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: 'rgba(225,29,72,0.06)', borderRadius: '8px', border: '1px solid rgba(225,29,72,0.18)' }}>
-                <span style={{ color: '#fda4af' }}>⚠️ Distraction app breach</span>
-                <strong style={{ color: '#fb7185' }}>-5 Point Penalty</strong>
+              <div className="rule-matrix-row penalty">
+                <span className="rule-label">⚠️ Distraction app breach</span>
+                <strong className="rule-reward danger">-5 Point Penalty</strong>
               </div>
             </div>
           </div>
