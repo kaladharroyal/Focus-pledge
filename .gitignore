@@ -12,8 +12,6 @@ dist/
 build/
 */dist/
 */build/
-
-# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
